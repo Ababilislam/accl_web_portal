@@ -1,0 +1,381 @@
+{{extend 'layout.html'}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{=response.title}}</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;400;600;700&display=swap');
+         
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .forecast_table {
+            margin-top: 10px;
+            border: 1px solid rgb(155, 155, 155); 
+        }
+        
+        .forecast_table .all_forecast th {
+            padding: 5px;
+            height: 40px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 400;
+            border: 1px solid black;
+            color: {{=session.button_text_color}};
+            background: {{=session.button_color}}
+        }
+        
+        .forecast_table td {
+            font-size: 14px;
+            font-weight: 400;
+            padding: 5px;
+            /* align-items: center; */
+        }
+
+        .forecast_table .single_row {
+            /* padding: 10px; */
+            /* text-align: center; */
+            font-size: 10px;
+            border: 1px solid rgb(155, 155, 155);
+        }
+        
+        .forecast_table .single_row td {
+            text-align: left;
+            border: 1px solid rgb(155, 155, 155);
+        }
+
+        /* .forecast_table .single_row #next_btn {
+            border: 0;
+            background-color: white;
+            cursor: pointer;
+            color: {{=session.button_color}}
+        } */
+
+        #rep_view {
+            height: 30px;
+            width: 60px;
+            padding: 5px 10px 5px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid black;
+            color: {{=session.text_color}};
+            /* background-color: {{=session.button_color}} */
+        }
+
+        #download_forecast {
+            height: 30px;
+            width: 150px;
+            padding: 5px 10px 5px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid black;
+            color: {{=session.text_color}};
+            /* background-color: {{=session.button_color}} */
+        }
+
+        #status_up {
+            height: 30px;
+            width: 80px;
+            padding: 5px 10px 5px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid black;
+            color: {{=session.text_color}};
+            background-color: {{=session.button_color}}
+        }
+
+        .forecast_table .process_btn_row {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        #process_btn input {
+            height: 20px;
+            width: 150px;
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 13px;
+            border: 1px solid black;
+            border-radius: 20px;
+            cursor: pointer;
+            color: {{=session.button_text_color}};
+            background-color: {{=session.button_color}}
+        }
+
+        #process_btn input:hover {
+            background-color: white;     		
+            box-shadow: 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5);
+            color: {{=session.text_color}}
+        }
+
+        #flashMessage {
+            font-size: 12px;
+            font-weight: 400;
+            color: #d42d22;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .view-btn-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            justify-content: flex-start;
+            padding-top: 10px;
+        }
+
+        .view-btn-row label {
+            padding-top: 6px;
+            text-align: center;
+            margin-right: 20px;
+        }
+
+        .view-btn-row input {
+            height: 32px;
+            width: 110px;
+            padding: 5px 10px;
+            margin-right: 5px;
+            font-size: 13px;
+            border: 1px solid black;
+            border-radius: 20px;
+            cursor: pointer;
+            color: {{=session.button_text_color}};
+            background-color: {{=session.button_color}}
+        }
+
+        #select_month {
+            width: 160px;
+            padding: 5px 10px;
+            font-size: 13px;
+            background-color: transparent;
+            border-radius: 20px;
+            border: 1px solid {{=session.button_color}};
+            color: {{=session.text_color}};
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var flashMessage = document.getElementById("flashMessage");
+
+            if (flashMessage) {
+                flashMessage.style.display = "block";
+                
+                setTimeout(function() {
+                    flashMessage.style.display = "none";
+                }, 3000); // 3000 milliseconds = 3 seconds
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectMonth = document.getElementById('select_month');
+            
+            var today = new Date();
+            var currentMonth = (today.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-based, so add 1
+            var currentYear = today.getFullYear();
+            var formattedDate = currentYear + '-' + currentMonth;
+
+            selectMonth.value = formattedDate;
+        });
+    </script>
+</head>
+
+<body>
+    {{if session.user_type == 'admin':}}
+    <table class="forecast_table" width="680px" >
+        <tr class="all_forecast">
+            <th style="width: 40px;">SL</th>
+            <th style="width: 100px;">RM ID</th>
+            <th style="width: 200px;">RM Name</th>
+            <th style="width: 50px;">Forecast</th>
+            <!-- <th style="width: 160px;">Download Forecast</th> -->
+            <th style="width: 50px;" colspan="2">Approve/Reject Forecast</th>
+            <!-- <th style="width: 50px;">Reject</th> -->
+            <th style="width: 50px;">Status</th>
+        </tr>
+        {{
+            rm_count = 0
+            sl = 0
+            sup_list = []
+            for s in range(len(get_sup_list)):
+                sup_list_records = get_sup_list[s]
+                sup_id = str(sup_list_records['sup_id'])
+                sup_name = sup_list_records['sup_name']
+                sup_list.append(sup_id)
+                session.rm_id = sup_id
+                rm_count += 1
+                sl += 1
+                status = ''
+
+                check_forcasting_sql_temp = "SELECT * FROM forecast_rm_temp WHERE cid = '"+session.cid+"' AND sup_id = '"+str(sup_id)+"' AND submitted_date = (SELECT MAX(submitted_date) FROM forecast_rm_temp WHERE cid = '"+session.cid+"' AND sup_id = '"+str(sup_id)+"') AND status IN ('SUBMITTED','POSTED','APPROVED','REJECTED');"
+                check_forcasting = db.executesql(check_forcasting_sql_temp, as_dict = True)
+                
+                if len(check_forcasting):
+                    for s in range(len(check_forcasting)):
+                        sup_status_records = check_forcasting[s]
+                        status = str(sup_status_records['status'])
+                    pass
+
+                elif len(check_forcasting) == 0:
+                    check_forcasting_sql = "SELECT * FROM forecast_rm WHERE cid = '"+session.cid+"' AND sup_id = '"+str(sup_id)+"' AND submitted_date = (SELECT MAX(submitted_date) FROM forecast_rm WHERE cid = '"+session.cid+"' AND sup_id = '"+str(sup_id)+"' AND NOT status = 'PROCESSED') AND NOT status = 'PROCESSED';"
+                    check_forcasting = db.executesql(check_forcasting_sql, as_dict = True)
+
+                    if len(check_forcasting):
+                        for s in range(len(check_forcasting)):
+                            sup_status_records = check_forcasting[s]
+                            status = str(sup_status_records['status'])
+                        pass
+                    pass
+                pass
+        }}
+    
+        <tr class="single_row" >
+            <td>{{=sl}}</td>
+            <td>{{=sup_id}}</td>
+            <td>{{=sup_name}}</td>
+            {{if status == 'POSTED' or status == 'APPROVED' or status == 'REJECTED':}}
+                <td>
+                    <form action="{{=URL(c='forcasting_admin',f='forcasting_view_rm',args=[sup_id])}}">
+                        <input type="submit" id="rep_view" name="rm_view" class="view_forecast" value="View">
+                    </form>
+                </td>
+                <!-- <td>
+                    <form name="form2" action="{{#=URL(c='forcasting_admin',f='forcasting_csv_download_for_mpo',args=[sup_id])}}" method="post">
+                        <input type="submit" id="download_forecast" value="Forecast Download" style="background-color: #C3E0E7">
+                    </form>
+                </td> -->
+                {{if status == 'APPROVED' or status == 'REJECTED':}}
+                    <td>
+                        <input type="submit" id="status_up" name="approve" value="Approve" style="border: 1px solid #949494; color: #949494; background-color: #d6d6d6" disabled>
+                    </td>
+                    <td>
+                        <input type="submit" id="status_up"  name="reject" value="Reject" style="border: 1px solid #949494; color: #949494; background-color: #d6d6d6" disabled>
+                    </td>                   
+                {{else:}}
+                    <form name="form2" action="{{=URL(c='forcasting_admin',f='forcasting_rm_approve_reject',args=[sup_id])}}" method="post">
+                        <td>
+                            <input type="submit" id="status_up" name="approve" value="Approve" style="background-color: #9CEA83">
+                        </td>
+                        <td>
+                            <input type="submit" id="status_up"  name="reject" value="Reject" style="background-color: #E17660">
+                        </td>
+                    </form>
+                {{pass}}
+            {{else:}}
+                <td></td>  
+                <td></td>
+                <td></td>
+            {{pass}}
+            <td>{{=status}}</td>
+        </tr>
+        {{pass}}
+        {{sup_list = str(sup_list).replace('[','').replace(']','')}}
+        <!-- <tr class="process_btn_row"> -->
+            <!-- <form name="form2" action="{{#=URL(c='forcasting_admin',f='process_zm_forcasting',vars=dict(zm_list=sup_list, rm_count=rm_count))}}" method="post">
+                <td colspan="2">
+                    <input type="submit" id="process_btn" name="rm_process_btn" value="Process">
+                </td>
+            </form> -->
+
+            <!-- {{#if session.process_flash:}}
+                <td colspan="5" id="flashMessage">
+                    {{#=session.process_flash}}
+                </td>
+                {{#session.process_flash = None}}
+            {{#pass}} -->
+        <!-- </tr> -->
+    </table>
+    {{pass}}
+
+    <br>
+    <br>
+    <br>
+
+    <!-- view btn row -->
+    <table class="view-btn-row">
+        {{proc_status = ''}}
+        <tr>
+            <td><label for="csvFile">Forecasting data:</label></td>
+            {{if session.user_type == 'admin':}}
+                {{#check_processed_forecasting_sql = "SELECT status FROM forecast_rm_temp WHERE cid = '"+session.cid+"' AND sup_id = '"+str(session.user_id)+"' AND forcasting_first_date = '"+str(session.first_date_of_month)+"' AND status = 'PROCESSED' GROUP BY sup_id, forcasting_first_date;"
+                #check_processed_forecasting = db.executesql(check_processed_forecasting_sql, as_dict=True)
+        
+                #if len(check_processed_forecasting) != 0:
+                    #proc_status = str(check_processed_forecasting[0]['status'])
+                #pass }}
+                {{#if proc_status == 'PROCESSED':}}
+                    <!-- <form id="form2" name="form2" method="POST" action="{{#=URL(c='forcasting_admin',f='forcasting_view_only')}}">
+                        <td>
+                            <input type="submit" id="sup_view" name="sup_view_only" class="view_forecast" value="View" style="background-color: #f0f0f0; color: {{#=session.text_color}}">
+                        </td>
+                    </form>
+
+                    <form id="form2" name="form2" method="POST" action="{{#=URL(c='forcasting_admin',f='forcasting_rm_view')}}">
+                        <td>
+                            <input type="submit" id="sup_view" name="rm_view_edit" class="view_forecast" value="Edit">
+                        </td>
+                    </form> -->
+                {{#else:}}
+                    <!-- <form id="form2" name="form2" method="POST" action="{{#=URL(c='forcasting_admin',f='forcasting_view_only')}}">
+                        <td>
+                            <input type="submit" id="sup_view" name="sup_view_only" class="view_forecast" value="View" style="background-color: #f0f0f0; color: {{#=session.text_color}}" disabled>
+                        </td>
+                    </form>
+
+                    <form id="form2" name="form2" method="POST" action="{{#=URL(c='forcasting_admin',f='forcasting_rm_view')}}">
+                        <td>
+                            <input type="submit" id="sup_view" name="rm_view_edit" class="view_forecast" value="Edit" disabled>
+                        </td>
+                    </form> -->
+                {{#pass}}
+                <form id="form3" name="form3" method="POST" action="{{=URL(c='forcasting_admin',f='forcasting_csv_download_rm')}}">
+                    <!-- <input type="file" id="csvFile" name="csvFile" accept=".csv"> -->
+                    <td><input type="submit" value="Download Final Excel File" style="width: 210px;"></td>
+                </form>
+            {{pass}}
+        </tr>
+    </table>
+
+    <br>
+    <br>
+
+    <!-- view btn row -->
+    <table class="view-btn-row">
+        <tr>
+            <td><label for="csvFile">Download Previous Forecast Data:</label></td>
+            {{if session.user_type == 'admin':}}
+            <form id="form3" name="form3" method="POST" action="{{=URL(c='forcasting_admin',f='forcasting_csv_download_rm_prev')}}">
+                <!-- <input type="file" id="csvFile" name="csvFile" accept=".csv"> -->
+                <td>
+                    <input type="month" id="select_month" name="select_month">
+                </td>
+                <td>
+                    <input type="submit" value="Download" style="width: 120px;">
+                </td>
+            </form>
+            {{pass}}
+        </tr>
+        {{if session.download_error_flash:}}
+            <tr>
+                <td id="flashMessage" style="color: red;">
+                    {{=session.download_error_flash}}
+                </td>
+                {{session.download_error_flash = None}}
+            </tr>
+        {{pass}}
+    </table>
+    
+</body>
+</html>
+
+
+

@@ -1,0 +1,90 @@
+{{extend 'layout.html'}}
+
+
+<style>
+	.back_btn {
+		height: 32px;
+		width: 75px;
+		margin: 10px;
+		padding: 5px 5px 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	.back_btn input {
+		border: 0;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	.content {
+		margin: 10px;
+	}
+	.upload_row p {
+		padding-top: 10px;
+		font-weight: 300;
+	}
+	#excel_data {
+		height: 150px;
+		width: 100%;
+		font-size: 13px;
+		border: 1px solid rgb(188, 188, 188);
+	}
+	.content input {
+		height: 32px;
+		width: 80px;
+		margin: 10px 0px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	.info_row p {
+		padding-top: 10px;
+		font-weight: 300;
+	}
+	.info_row .record_saved {
+		color: {{=session.button_color}}
+	}
+	.info_row .record_error {
+		color: rgb(255, 111, 111);
+	}
+	#error_data {
+		height: 150px;
+		width: 100%;
+		font-family: 'Poppins', sans-serif;
+		font-size: 13px;
+		border: 1px solid rgb(188, 188, 188);
+	}
+</style>
+
+  <div class="back_btn">
+    <form action="{{=URL(c='representative',f='rep_area')}}" method="post">
+      <i class="fa-solid fa-arrow-left"></i>
+      <input name="prev_page_btn" type="submit" value="Back"/>
+    </form>
+  </div>
+  
+  <!-- Upload row -->
+  <div class="content">
+    <form name="batch_client" id="batch_client" action="{{=URL(c='representative',f='area_batch_upload')}}" method="post">
+      <div class="upload_row">
+        <p>Download this <a href="{{=URL('static','area_upload_format.xls')}}">Excel Template</a>, then fill in with data and copy-paste (maximum 100 records) below to upload.</p>
+        <textarea name="excel_data" id="excel_data" placeholder="Copy-paste (maximum 100 records) below to upload"></textarea>
+        <input type="submit" name="upload_btn" id="upload_btn" value="Upload" title="Upload Data"/>
+      </div>
+      <div class="info_row">
+        <p>Total Record: <b>{{=total_row}}</b> | <span class="record_saved">Record Saved: <b>{{=count_inserted}}</b></span> | <span class="record_error">Record Error: <b>{{=count_error}}</b></span></p>
+        <p>Upload Details:</p>
+        <pre id="error_data" readonly>{{=error_str}}</pre>
+      </div>
+    </form>
+  </div>
+
+

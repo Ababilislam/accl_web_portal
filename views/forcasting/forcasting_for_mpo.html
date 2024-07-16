@@ -1,0 +1,126 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<style>
+    .top-row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		width: 100%;
+		justify-content: flex-start;
+		padding-top: 10px;
+	}
+
+	.top-row label {
+		padding-top: 6px;
+		text-align: center;
+		margin-right: 20px;
+	}
+
+	.top-row input {
+		height: 32px;
+		width: 110px;
+		padding: 5px 10px;
+		margin-right: 5px;
+		font-size: 13px;
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+
+	#flashMessage {
+		font-size: 12px;
+		font-weight: 400;
+		margin-top: 5px;
+	}
+</style>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		var flashMessage = document.getElementById("flashMessage");
+
+		if (flashMessage) {
+			flashMessage.style.display = "block";
+			
+			setTimeout(function() {
+				flashMessage.style.display = "none";
+			}, 3000); // 3000 milliseconds = 3 seconds
+		}
+	});
+</script>
+{{end}}
+
+<!-- top btn row  -->
+<table class="top-row">
+	<tr>
+		<td><label for="csvFile">Forecasting data:</label></td>
+		<form id="form2" name="form2" method="POST" action="{{=URL(c='forcasting',f='forcasting_rep_view')}}">
+			{{if status == 'POSTED' or status == 'APPROVED':}}
+				<td><input type="submit" value="View"></td>
+			{{else:}}
+				{{if ((opening_date <= current_date) and (current_date <= closing_date)):}}
+					<td><input type="submit" value="Edit"></td>
+				{{else:}}
+					<td><input type="submit" value="Edit" style="border: 1px solid #949494; color: #949494; background-color: #d6d6d6" disabled></td>
+				{{pass}}
+			{{pass}}
+		</form>
+		<form id="form2" name="form2" method="POST" action="{{=URL(c='forcasting',f='forcasting_csv_for_mpo')}}">
+			<!-- <input type="file" id="csvFile" name="csvFile" accept=".csv"> -->
+			<td><input type="submit" value="Download Excel File" style="width: 180px;"></td>
+		</form>
+		{{if status == 'APPROVED' or status == 'REJECTED':}}
+		<td>
+			{{if status == 'APPROVED':}}
+				<span id="flashMessage" style="color: {{=session.button_color}}">{{=session.approved_message}}</span>
+				{{session.approved_message = None}}
+
+			{{elif status == 'REJECTED':}}
+				<span id="flashMessage" style="color: #d42d22;">{{=session.rejected_message}}</span>
+				{{session.rejected_message = None}}
+
+			{{pass}}
+		</td>
+		{{pass}}
+	</tr>
+</table>
+
+
+<br>
+<br>
+<br>
+
+
+<!-- file row  -->
+<table class="upload-row">
+	<tr>
+		<td>
+			<form id="form3" name="form3" method="POST" action="{{=URL(c='forcasting',f='forcasting_csv_upload_for_mpo')}}" enctype="multipart/form-data">
+			{{if ((opening_date <= current_date) and (current_date <= closing_date)):}}
+				<input type="file" name="csvFile">
+				<input type="submit" value="Upload CSV">
+			{{else:}}
+				<input type="file" name="csvFile" disabled>
+				<input type="submit" value="Upload CSV" disabled>
+			{{pass}}
+			</form>
+		</td>
+	</tr>
+	{{if session.upload_flash:}}
+		<tr>
+			<td id="flashMessage" style="color: {{=session.button_color}}">
+				{{=session.upload_flash}}
+			</td>
+		</tr>
+		{{session.upload_flash = None}}
+	{{elif session.error_flash:}}
+		<tr>
+			<td id="flashMessage" style="color: #d42d22;">
+				{{=session.error_flash}}
+			</td>
+		</tr>
+		{{session.error_flash = None}}
+	{{pass}}
+</table>

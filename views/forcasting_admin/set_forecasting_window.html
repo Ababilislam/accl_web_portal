@@ -1,0 +1,300 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+<style>
+	.input_row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		width: 100%;
+		justify-content: flex-start;
+		padding-top: 10px;
+	}
+	
+	.input_row input {
+		width: 160px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+
+	.input_row #submit_btn {
+		width: 110px;
+		padding: 5px 10px 5px 10px;
+		font-size: 13px;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	
+	.input_row #submit_btn:hover {
+		cursor: pointer;
+	}
+	
+	#flashMessage {
+		font-size: 12px;
+		font-weight: 400;
+		display: none;
+		margin-top: 5px;
+		color: {{=session.button_color}}
+	}
+
+	#planning_month {
+		width: 160px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+
+	/* #planning_month {
+        -webkit-appearance: none; 
+        -moz-appearance: none; 
+        appearance: none; 
+        background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="none" stroke="%23000" stroke-width=".3" d="M.5 1l1.5 2 1.5-2"/></svg>') no-repeat right 15px center;
+        background-size: 11px; 
+        background-color: white;
+        width: 160px;
+        padding: 5px 10px; 
+        font-size: 13px;
+        border-radius: 20px;
+        border: 1px solid {{=session.button_color}};
+    } */
+
+	.date-table {
+		margin-top: 50px;
+		width: 800px;
+	}
+	.date-table .all_date td {
+		width: 250px;
+		padding: 10px;
+		text-align: center;
+		font-size: 13px;
+		border: 1px solid black;
+		background: {{=session.button_color}}
+	}
+	.date-table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 12px;
+		border: 1px solid black;
+	}
+	.date-table .single_row td {
+		border: 1px solid black;
+		height: 30px;
+	}
+
+	#update_btn {
+		border: none;
+		background-color: transparent;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	}
+</style>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		var flashMessage = document.getElementById("flashMessage");
+
+		if (flashMessage) {
+			flashMessage.style.display = "block";
+			
+			setTimeout(function() {
+				flashMessage.style.display = "none";
+			}, 3000); // 3000 milliseconds = 3 seconds
+		}
+	});
+</script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+        var select = document.getElementById('planning_month');
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = today.getMonth(); // JavaScript months are 0-based
+        // var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+		for (var i = 0; i < 12; i++) {
+            var option = document.createElement('option');
+            var displayMonth = monthNames[month] + '-' + year;
+            option.value = displayMonth;
+            option.text = displayMonth;
+            select.appendChild(option);
+
+            month += 1;
+            if (month > 11) {
+                month = 0;
+                year += 1;
+            }
+        }
+    });
+</script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		var today = new Date();
+
+		var firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+		// Format the date to YYYY-MM-DD
+		var yyyy = firstDayOfMonth.getFullYear();
+		var mm = String(firstDayOfMonth.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+		var dd = String(firstDayOfMonth.getDate()).padStart(2, '0');
+
+		var minDate = yyyy + '-' + mm + '-' + dd;
+
+		// Set the min attribute for both date inputs
+		document.getElementById('opening_date').setAttribute('min', minDate);
+		document.getElementById('closing_date').setAttribute('min', minDate);
+	});
+</script>
+<!-- script for month field -->
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		var selectMonth = document.getElementById('pl_month');
+		
+		var today = new Date();
+		var currentMonth = (today.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-based, so add 1
+		var currentYear = today.getFullYear();
+		var formattedDate = currentYear + '-' + currentMonth;
+
+		// selectMonth.value = formattedDate;
+		selectMonth.min = formattedDate; // Disable all previous months  courrent month = this month.
+	});
+
+</script>
+
+<!-- disable previous month selection for op_date and cl_date -->
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		var dateInput = document.getElementById('op_date');
+		// var dateInput = document.getElementById('cl_date');
+		var today = new Date();
+		var year = today.getFullYear();
+		var month = today.getMonth() + 1; // Months are zero-based
+		var day = 1; // First day of the month
+		var minDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+		dateInput.setAttribute('min', minDate);
+	});
+	document.addEventListener("DOMContentLoaded", function() {
+		var dateInput = document.getElementById('cl_date');
+		var today = new Date();
+		var year = today.getFullYear();
+		var month = today.getMonth() + 1; // Months are zero-based
+		var day = 1; // First day of the month
+		var minDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+		dateInput.setAttribute('min', minDate);
+	});
+</script>
+
+{{end}}
+
+{{block body}}
+
+<table class="input_row">
+	<form action="{{=URL(c='forcasting_admin',f='set_forecasting_window')}}">
+		<tr>
+			<td style="font-size: 14px; padding-right: 10px;" colspan="2">Insert Date Range Below To Set Forecasting Window</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td style="font-size: 13px; padding-right: 10px; width: 120px;">Planning Month:</td>
+			<td>
+				<select id="planning_month" name="planning_month" class="month"></select>
+			</td>
+		</tr>
+		<tr>
+			<td style="font-size: 13px; padding-right: 10px; width: 120px;">Opening date:</td>
+			<td>
+				<input type="date" id="opening_date" name="from_date" placeholder="{{=session.from_dt}}" value="{{=session.from_dt}}" class="date">
+			</td>
+		</tr>
+		<tr>
+			<td style="font-size: 13px; padding-right: 10px; width: 120px;">Closing date:</td>
+			<td>
+				<input type="date" id="closing_date" name="to_date" placeholder="{{=session.to_date}}" value="{{=session.to_date}}" class="date">
+			</td>
+		</tr>
+		<!-- <tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr> -->
+		<tr>
+			<td></td>
+			<td style="padding-top: 5px;">
+				<input type="submit" id="submit_btn" name="save_btn" value="Save">
+				{{if session.save_flash:}}
+					<span id="flashMessage">
+						{{=session.save_flash}}
+					</span>
+					{{session.save_flash = None}}
+
+				{{elif session.error_flash:}}
+					<span id="flashMessage" style="color: red;">
+						{{=session.error_flash}}
+					</span>
+					{{session.error_flash = None}}
+				{{pass}}
+			</td>
+		</tr>
+	</form>
+</table>
+
+<!-- data table  -->
+<table class="date-table" width="100px">
+	<!-- <form name="form1" action="POST"> -->
+	<!-- <tr style="font-size: 12px;">
+	</tr> -->
+	<tr class="all_date">
+		<td></td>
+		<td style="width: 150px;">Planning Month</td>
+		<td style="width: 150px;">Opening Date</td>
+		<td style="width: 150px;">Closing Date</td>
+		<td style="width: 50px;"></td>
+	</tr>
+	<!-- </form> -->
+	
+	{{if len(date_records) == 0:}}
+		<tr class="single_row">
+			<td>Current Forecast Window Range</td>
+			<td>-</td>
+			<td>-</td>
+			<td>-</td>
+			<td><input type="submit" id="update_btn" name="update_btn" value="Update" style="color: #949494;" disabled></td>
+		</tr>
+	{{else:}}
+		{{for i in range(len(date_records)):
+			data = date_records[i]
+			planning_month = str(data["planning_month"]).replace('None','')
+			opening_date = str(data["opening_date"]).replace('None','')
+			closing_date = str(data["closing_date"]).replace('None','')
+		}}
+			<tr class="single_row">
+				<td>Current Forecast Window Range</td>
+				<form action="{{=URL(c='forcasting_admin',f='edit_date_range')}}">
+					<!-- <input type="month" id="select_month" name="select_month"> -->
+					<td><input type="month" id="pl_month" name="pl_month" value="{{=planning_month}}" style="border: 1px solid rgb(214, 214, 214); width: 120px;"></td>
+					<td><input type="date" id="op_date" name="op_date" value="{{=opening_date}}" style="border: 1px solid rgb(214, 214, 214);"></td>
+					<td><input type="date" id="cl_date" name="cl_date" value="{{=closing_date}}" style="border: 1px solid rgb(214, 214, 214);"></td>
+					<td><input type="submit" id="update_btn" name="update_btn" value="Update"></td>
+				</form>
+			</tr>
+		{{pass}}
+	{{pass}}
+</table>
+
+{{if session.update_flash:}}
+	<h6 id="flashMessage"> 
+		{{=session.update_flash}}
+	</h6>
+	{{session.update_flash = None}}
+{{pass}}
+
+{{end}}

@@ -1,0 +1,714 @@
+{{extend 'layout.html'}}
+{{block head}}
+
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/ui.theme.css')}}" type="text/css" />
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/jquery-ui.css')}}" type="text/css" />
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/style.css')}}" type="text/css" />
+<script src="{{=URL('static','js_and_css/jquery-1.8.2.js')}}"></script>
+<script src="{{=URL('static','js_and_css/jquery-ui.js')}}"></script>
+
+<style>
+	:root {
+            --bg_color: {{=session.bg_color}};
+            --layout_color: {{=session.layout_color}};
+            --button_color: {{=session.button_color}};
+            --button_text_color: {{=session.button_text_color}};
+            --heading_text: {{=session.heading_text}};
+            --text_color: {{=session.text_color}};
+        }
+    .top_row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px 0 10px 0;
+    }
+
+    .top_row .region_add .id_add input {
+		width: 250px;
+        margin-right: 2px;
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+
+    .top_row .region_add .name_add input {
+		width: 250px;
+        margin-right: 2px;
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+
+    .top_row .region_add .add_btn input {
+		height: 32px;
+		width: 100px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+
+	.top_row .search input {
+		width: 250px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 30px;
+		border: 1px solid {{=session.button_color}}
+	}    
+
+    .top_row .search button {
+		height: 32px;
+		padding: 5px 10px 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+        cursor: pointer;
+		background-color: {{=session.button_color}};
+		color: {{=session.button_text_color}}
+	}
+
+	.go_back {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.go_back span {
+		margin-top: 5px;
+		padding: 0 5px;
+	}
+	
+    .level_table {
+		margin-top: 0px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.level_table .all_level td {
+		padding: 10px;
+		text-align: center;
+		font-size: 14px;
+		border: 1px solid black;
+		background: {{=session.button_color}}
+	}
+	
+	.level_table td {
+		font-size: 14px;
+		font-weight: 400;
+		padding: 5px;
+		align-items: center;
+	}
+
+	.level_table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.level_table .single_row td {
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.level_table .single_row #next_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	}
+
+	.level_table .single_row #terri_name {
+		width: 300px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.button_update {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	}
+	
+	#return_btn ,#download_btn {
+		font-weight: 300;
+		font-size: 13px;
+		padding: 5px 10px;
+		border-radius: 20px;
+		border: 1px solid {{=session.button_color}};
+		background-color: {{=session.background_color}}
+	}
+	#download_btn{
+		margin-bottom: 25px;
+	}
+	.warning-message {
+    color: #ff0000;
+	font-size: small;
+	}
+	.insert_success {
+    color: green;
+	font-size: small;
+	}
+	#update_message {
+    color: #ff0000;
+	font-size: small;
+	}
+	#button_go{
+		text-align: center;
+		color: {{=session.button_text_color}};
+		border: 1px solid {{=session.button_color}};
+		background-color: {{=session.button_color}}
+		
+	}
+</style>
+
+<script>
+	var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+	
+	$(function() {
+			 var valueListStr="";
+			$('#level_search').keyup(function(){
+				$.ajax({
+					  url: base_url+'level/get_level_list',
+					  success: function(resStr) {
+						  valueListStr=resStr
+					  }
+					});
+	
+	
+				//-------------------------
+		  
+				var valueList = valueListStr.split(',');				
+				var searchValue=$("#level_search").val();
+	
+				//---------------- auto complete combo list
+	
+				var valueList_new=new Array();
+				lc=0;
+	
+				i =0;
+	
+				var valueStr="";				
+	
+				while (i < valueList.length)
+	
+				{
+	
+					valueStr=valueList[i];
+	
+					i=i+1;					
+	
+					var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+	
+					if (res!=null){
+	
+						valueList_new[lc]=valueStr;
+	
+						lc=lc+1;
+	
+						if (lc==30){
+	
+							break;
+	
+						};
+	
+					}else{
+	
+						continue;
+	
+					}					
+	
+				};
+	
+				//alert (ref_list_new);
+	
+				//-------------- auto complete source
+				$( "input#level_search" ).autocomplete({
+					source: valueList_new
+				});
+		  }); 
+	
+		   //==============	   
+	
+	}); 
+
+
+	
+</script>
+
+<script>
+	setTimeout(function() {
+        document.getElementsByClassName('warning-message').style.display = 'none';
+    }, 3000);
+	setTimeout(function() {
+        document.getElementById('insert_error').style.display = 'none';
+    }, 3000);
+	setTimeout(function() {
+        document.getElementById('insert_success').style.display = 'none';
+    }, 3000);
+	setTimeout(function() {
+        document.getElementById('update_message').style.display = 'none';
+    }, 3000);
+	setTimeout(function() {
+        document.getElementById('search_error').style.display = 'none';
+    }, 3000);
+</script>
+  
+{{end}} 
+
+{{if depth==0:}}
+<div class="top_row">
+    <form action="{{=URL(c='level', f='level')}}" method="post">
+        <table>
+            <tr class="region_add">
+                <td class="id_add">
+                    <input type="text" id="division_id" name="division_id" placeholder="Division ID">
+                </td>
+                <td class="name_add">
+                    <input type="text" id="division_name" name="division_name" placeholder="Division Name">
+                </td>
+                <td class="add_btn">
+                    <input type="submit" name="submit" id="submit" value="Save">
+                </td>
+            </tr>
+			<tr>
+				{{if session.insert_error:}}
+				<td height="30"><span class="warning-message" id="insert_error" style="
+					position: fixed; 
+					top: 16%; 
+					left:15.5%;
+					background-color: none; 
+					color: red;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.insert_error}}</span></td>
+				{{elif session.insert_success:}}
+				<td height="30"><span class="insert_success" id="insert_success" style="
+					position: fixed; 
+					top: 16%; 
+					left:15.5%;
+					background-color: none; 
+					color: green;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.insert_success}}</span></td>
+				{{pass}}
+
+			</tr>
+        </table>
+    </form>
+{{pass}}
+{{if depth==1:}}
+<div class="top_row">
+    <form action="{{=URL(c='level', f='level')}}" method="post">
+        <table>
+            <tr class="region_add">
+                <td class="id_add">
+                    <input type="text" id="zone_id" name="zone_id" placeholder="Zone ID">
+                </td>
+                <td class="name_add">
+                    <input type="text" id="zone_name" name="zone_name" placeholder="Zone Name">
+                </td>
+				<td>
+					<input style="width: 200px" type="hidden" name="depth" value="{{=depth}}" />
+					<input style="width: 200px" type="hidden" name="division_id" value="{{=division_id}}" />
+					<input style="width: 200px" type="hidden" name="division_name" value="{{=division_name}}" />
+					
+				</td>
+                <td class="add_btn">
+                    <input type="submit" name="submit" id="submit" value="Save">
+                </td>
+            </tr>
+			<tr>
+				{{if session.insert_error:}}
+				<td height="30"><span class="warning-message" id="insert_error" style="
+					position: fixed; 
+					top: 16%; 
+					left:15.5%;
+					background-color: none; 
+					color: red;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.insert_error}}</span></td>
+				{{elif session.insert_success:}}
+				<td height="30"><span class="insert_success" id="insert_success"style="
+					position: fixed; 
+					top: 16%; 
+					left:15.5%;
+					background-color: none; 
+					color: green;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.insert_success}}</span></td>
+				{{pass}}
+			</tr>
+        </table>
+    </form>
+{{pass}}
+{{if depth==2:}}
+<div class="top_row">
+    <form action="{{=URL(c='level', f='level')}}" method="post">
+        <table>
+            <tr class="region_add">
+                <td class="id_add">
+                    <input type="text" id="area_id" name="area_id" placeholder="Area ID">
+
+                <td class="name_add">
+                    <input type="text" id="area_name" name="area_name" placeholder="Area Name">
+                </td>
+				<td>
+					<input style="width: 200px" type="hidden" name="depth" value="{{=depth}}" />
+					<input style="width: 200px" type="hidden" name="division_id" value="{{=division_id}}" />
+					<input style="width: 200px" type="hidden" name="division_name"value="{{=division_name}}" />
+					<input style="width: 200px" type="hidden" name="zone_name" value="{{=zone_name}}" />
+					<input style="width: 200px" type="hidden" name="zone_id" value="{{=zone_id}}" />
+				</td>
+                <td class="add_btn">
+                    <input type="submit" name="submit" id="submit" value="Save">
+                </td>
+            </tr>
+			<tr>
+				{{if session.insert_error:}}
+				<td height="30"><span class="warning-message" id="insert_error" style="
+					position: fixed; 
+					top: 16%; 
+					left:15.5%;
+					background-color: none; 
+					color: red;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.insert_error}}</span></td>
+				{{elif session.insert_success:}}
+				<td height="30"><span class="insert_success" id="insert_success" style="
+					position: fixed; 
+					top: 16%; 
+					left:15.5%;
+					background-color: none; 
+					color: green;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.insert_success}}</span></td>
+				{{pass}}
+			</tr>
+        </table>
+    </form>
+{{pass}}
+{{if depth==3:}}
+<div class="top_row">
+    <form action="{{=URL(c='level', f='level')}}" method="post">
+        <table>
+            <tr class="region_add">
+                <td class="id_add">
+                    <input type="text" id="territory_id" name="territory_id" placeholder="Territory ID">
+                </td>
+                <td class="name_add">
+                    <input type="text" id="territory_name" name="territory_name" placeholder="Territory Name">
+                </td>
+				<td>
+					<input style="width: 200px" type="hidden" name="depth" value="{{=depth}}" />
+					<input style="width: 200px" type="hidden" name="division_id" value="{{=division_id}}" />
+					<input style="width: 200px" type="hidden" name="division_name"value="{{=division_name}}" />
+					<input style="width: 200px" type="hidden" name="zone_id" value="{{=zone_id}}" />
+					<input style="width: 200px" type="hidden" name="zone_name" value="{{=zone_name}}" />
+					<input style="width: 200px" type="hidden" name="area_id" value="{{=area_id}}" />
+					<input style="width: 200px" type="hidden" name="area_name" value="{{=area_name}}" />
+				</td>
+				 
+                <td class="add_btn">
+                    <input type="submit" name="submit" id="submit" value="Save">
+                </td>
+            </tr>
+			<tr>
+				{{if session.insert_error:}}
+				<td height="30"><span class="warning-message" id="insert_error" style="
+					position: fixed; 
+					top: 16%; 
+					left:15.5%;
+					background-color: none; 
+					color: red;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.insert_error}}</span></td>
+				{{elif session.insert_success:}}
+				<td height="30"><span class="insert_success" id="insert_success" style="
+					position: fixed; 
+					top: 16%; 
+					left:15.5%;
+					background-color: none; 
+					color: green;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.insert_success}}</span></td>
+				{{pass}}
+			</tr>
+        </table>
+    </form>
+{{pass}}
+    <div class="search">
+		<form id="form" name="form" method="post" action="{{=URL(c='level',f='level')}}">
+			<table class="search_level">
+				<tr>
+					<td align="right">
+						{{if session.level_search=='' or session.level_search==None:}}
+						<input type="text" name="level_search" id="level_search" size="25" value="" autocomplete="off"
+						  style="width:250px" placeholder="Select Level ID/Name" />
+						{{else:}}
+						<input type="text" name="level_search" id="level_search" value="{{=session.level_search}}"
+						  placeholder="Select Level ID/Name" autocomplete="off" style="width:250px" />
+						{{pass}}
+						
+						<button type="submit" name="btn_search" id="btn_search">
+							<input type="hidden" type="submit" name="btn_search" id="btn_search" value="">
+							<i class="fa-solid fa-magnifying-glass"></i>
+						</button>
+					</td>
+				</tr>
+				<tr><td><span class="warning-message" id="search_error" style="
+					position: fixed; 
+					top: 16%; 
+					right:11%;
+					background-color: none; 
+					color: red;
+					padding: 10px; 
+					border-radius: 5px; 
+					z-index: 1000;
+					">{{=session.search_error}}</span></td></tr>
+			</table>
+		</form>
+    </div>
+</div>
+
+<!-- return to previous page -->
+<table width="90%">
+	<tr>
+		<td height="10">
+			{{if depth>0:}}
+			<form style="display: inline-block; height: 0px; padding: 0;  margin-top: 10px; margin-bottom: 10px;"
+				action="{{=URL(c='level',f='level',vars={'depth':0,'division_id':division_id})}}" method="post">
+				<input type="submit" name="return_btn" id="return_btn" value="{{=division_name}} ({{=division_id}})" style="background-color: var(--button_color); color: var(--button_text_color);" />
+			</form>
+
+			{{pass}}
+			
+			{{ if depth>1:}}
+			<span>>></span>
+			<form style="display: inline-block; height: 0px; padding: 0;  margin-top: 10px; margin-bottom: 10px;"
+				action="{{=URL(c='level',f='level',vars={'depth':1,'division_id':division_id,'division_name':division_name,'zone_id':zone_id,'zone_name':zone_name})}}"
+				method="post">
+				<input type="submit" name="return_btn" id="return_btn" value="{{=zone_name}} ({{=zone_id}})" style="background-color: var(--button_color); color: var(--button_text_color);"/>
+			</form>
+			{{pass}}
+			{{ if depth>2:}}
+			<span>>></span>
+			<form style="display: inline-block; height: 0px; padding: 0; margin-top: 10px; margin-bottom: 10px;"
+				action="{{=URL(c='level',f='level',vars={'depth':2,'division_id':division_id,'division_name':division_name,'zone_id':zone_id,'zone_name':zone_name,'area_id':area_id,'area_name':area_name})}}"
+				method="post">
+				<input type="submit" name="return_btn" id="return_btn" value="{{=area_name}} ({{=area_id}})" style="background-color: var(--button_color); color: var(--button_text_color);"/>
+			</form>
+			{{pass}}
+		</td>
+		
+		<td align="right">
+			<a href="{{=URL(c='level',f='download_level')}}"><input type="button" name="download_btn" id="download_btn" value="Download" style="width: 120px; margin-top: 30px; margin-bottom: 10px;background-color: var(--button_color); color: var(--button_text_color); " /></a>
+			<a href="{{=URL(c='level',f='download_level_classic')}}"><input type="button" name="download_btn" id="download_btn" value="Download Classic"  style="width: 140px; margin-top: 30px; margin-bottom: 10px; background-color: var(--button_color); color: var(--button_text_color);"/></a>
+
+		</td>
+	</tr>
+	
+</table>
+
+
+<!-- <tr>
+	{{if session.update_delte_error!='' :}}
+	<tr><td><span id="update_message">{{=session.update_delete_error}}</span></td></tr>
+	{{elif session.update_delte_error=='' :}}
+	<tr><td><span id="update_message"></span></td></tr>
+	{{pass}}
+</tr> -->
+<tr>
+	<td style="position: relative;">
+		{{if session.update_delte_error != '' :}}
+			<div id="update_message" style="
+				position: fixed; 
+				top: 28%; 
+				left: 16%; 
+				background-color: none; 
+				color: green;
+				padding: 10px; 
+				border-radius: 5px; 
+				z-index: 1000;
+				">
+				{{=session.update_delete_error}}
+			</div>
+		{{elif session.update_delte_error == '' :}}
+			<div id="update_message" style="display: none;"></div>
+		{{pass}}
+	</td>
+</tr>
+<!--  -->
+
+<table class="level_table" width="90%" border="1" cellpadding="1" cellspacing="1">
+	
+	{{if depth==0:}}
+	<form name="form1" method="post">
+		<tr class="all_level">
+			<td width="130px">Division ID</td>
+			<td width="55px"></td>
+			<td width="350px">Division Name</td>
+			<td width="100px"></td>
+		</tr>
+	</form>
+	{{elif depth==1:}}
+	<form name="form1" method="post">
+		<tr class="all_level">
+			<td width="130px">Zone ID</td>
+			<td width="55px"></td>
+			<td width="350px">Zone Name</td>
+			<td width="100px"></td>
+		</tr>
+	</form>
+	{{elif depth==2:}}
+	<form name="form1" method="post">
+		<tr class="all_level">
+			<td width="130px">Area ID</td>
+			<td width="55px"></td>
+			<td width="350px">Area Name</td>
+			<td width="100px"></td>
+		</tr>
+	</form>
+	{{elif depth==3:}}
+	<form name="form1" method="post">
+		<tr class="all_level">
+			<td width="130px" style="color: var(--button_text_color);">Territory ID</td>
+			<td width="350px"  style="color: var(--button_text_color);">Territory Name</td>
+			<td width="100px"></td>
+		</tr>
+	</form>
+	{{pass}}
+	
+	{{if depth==0:}}
+	{{for i in range(len(level_records)):
+	depth_0_division_id = level_records[i]['level_id']
+	depth_0_division_name = level_records[i]['level_name']
+	}}
+	<tr align="left" class="blackCat">
+	<td align="center" width="110" >{{=depth_0_division_id}}</td>
+	<form id="form" name="form" method="post"
+		action="{{=URL(c='level',f='level',vars={'depth':1,'division_id':depth_0_division_id,'division_name':depth_0_division_name})}}">
+		<td width="46" align="center">
+		<input type="submit" name="button_go" id="button_go" value="&gt;&gt;"
+			class="button_go" />
+		</td>
+	</form>
+	<form id="form" name="form" method="post"
+		action="{{=URL(c='level',f='level',vars={'depth':depth,'division_id':depth_0_division_id})}}">
+		<td>
+		<input type="text" style="width: 95%" name="division_name" id="division_name"
+			value="{{=level_records[i]['level_name']}}" />
+		
+		</td>
+		<td width="50" align="right">
+			<input type="hidden" name="item_id" id="item_id" value="{{=level_records[i]['id']}}" />
+			<input type="submit" name="update_btn" id="update_btn" value="Update"class="button_update" />
+			<input type="submit" name="delete_btn" id="delete_btn" value="X"   class="button_update" style="border: 1px solid black; background: rgb(240, 237, 237); color: red;"/>
+	</td>
+	</form>
+	</tr>
+	{{pass}}
+	{{elif depth == 1:}} {{for i in range(len(level_records)):
+	depth_1_zone_id = level_records[i]['level_id']
+	depth_1_zone_name = level_records[i]['level_name']
+	}}
+	<tr align="left" class="blackCat">
+	<td align="center" width="110">{{=level_records[i]['level_id']}}</td>
+	<form id="form" name="form" method="post"
+		action="{{=URL(c='level',f='level',vars={'depth':2,'division_id':division_id,'division_name':division_name,'zone_id':depth_1_zone_id,'zone_name':depth_1_zone_name})}}">
+		<td width="46" align="center">
+		<input type="submit" name="btn_go" id="button_go" value="&gt;&gt;" class="button_go" />
+		</td>
+	</form>
+	<form id="form" name="form" method="post"
+		action="{{=URL(c='level', f='level',vars={'depth':depth,'division_id':division_id,'division_name':division_name})}}">
+		<td>
+		<input type="text" style="width: 95%" name="zone_name" id="zone_name"
+			value="{{=level_records[i]['level_name']}}" class="" />
+		<input type="hidden" name="zone_id" id="zone_id" value="{{=level_records[i]['level_id']}}">
+		</td>
+		<td width="50" align="right">
+			<input type="hidden" name="item_id" id="item_id" value="{{=level_records[i]['id']}}" />
+			<input type="submit" name="update_btn" id="update_btn" value="Update"class="button_update" />
+			<input type="submit" name="delete_btn" id="delete_btn" value="X"   class="button_update" style="border: 1px solid black; background: rgb(240, 237, 237); color: red;"/>
+		</td>
+	</form>
+ 	</tr>
+	{{pass}}
+	{{elif depth == 2:}} {{for i in range(len(level_records)):
+	depth_2_area_id= level_records[i]['level_id']
+	depth_2_area_name = level_records[i]['level_name']
+	}}
+	<tr align="left" class="blackCat">
+	<td align="center" width="110">{{=level_records[i]['level_id']}}</td>
+	<form id="form" name="form" method="post"
+		action="{{=URL(c='level',f='level',vars={'depth':3,'division_id':division_id,'division_name':division_name,'zone_id':zone_id,'zone_name':zone_name,'area_id':depth_2_area_id,'area_name':depth_2_area_name})}}">
+		<td width="46" align="center">
+		<input type="submit" name="btn_go" id="button_go" value="&gt;&gt;" class="button_go" />
+		</td>
+	</form>
+	<form id="form" name="form" method="post"
+		action="{{=URL(c='level',f='level',vars={'depth':depth,'division_id':division_id,'division_name':division_name,'zone_id':zone_id,'zone_name':zone_name})}}">
+		<td>
+		<input type="text" style="width: 95%" name="area_name" id="area_name"
+			value="{{=level_records[i]['level_name']}}" />
+		<input type="hidden" name="area_id" id="area_id" value="{{=level_records[i]['level_id']}}">
+		
+		</td>
+		<td width="50" align="right">
+			<input type="hidden" name="item_id" id="item_id" value="{{=level_records[i]['id']}}" />
+			<input type="submit" name="update_btn" id="update_btn" value="Update"class="button_update" />
+			<input type="submit" name="delete_btn" id="delete_btn" value="X"   class="button_update" style="border: 1px solid black; background: rgb(240, 237, 237); color: red;"/>
+			</td>
+		<!-- <td width="50" align="right" >
+<input type="submit" name="btn_delete" id="btn_delete" value="X" class="button_update"/>
+</td>	   -->
+	</form>
+	</tr>
+
+	{{pass}}
+	{{elif depth == 3:}} {{for i in range(len(level_records)):
+	depth_3_terri_id = level_records[i]['level_id']
+	depth_3_terri_name = level_records[i]['level_name']
+	}}
+	<tr align="left" class="blackCat">
+	<td align="center" width="110">{{=level_records[i]['level_id']}}</td>
+	<form id="form" name="form" method="post"
+		action="{{=URL(c='level',f='level',vars={'depth':depth,'division_id':division_id,'division_name':division_name,
+		'zone_id':zone_id,'zone_name':zone_name,'area_id':area_id,'area_name':area_name,'territory_id':depth_3_terri_id})}}">
+		<td>
+		<input type="text" style="width: 95%" name="territory_name" id="territory_name"
+			value="{{=level_records[i]['level_name']}}" />
+		</td>
+		<td width="50" align="right">
+		<input type="hidden" name="item_id" id="item_id" value="{{=level_records[i]['id']}}" />
+		<input type="submit" name="update_btn" id="update_btn" value="Update"class="button_update" />
+		<input type="submit" name="delete_btn" id="delete_btn" value="X"   class="button_update" 
+		style="border: 1px solid black; background: rgb(240, 237, 237); color: red;"/>
+		</td>
+		<!-- <td width="50" align="right" >
+<input type="submit" name="btn_delete" id="btn_delete" value="X" class="button_update"/>
+</td>	   -->
+	</form>
+	</tr>
+
+	{{pass}}
+
+	{{pass}}
+</table>

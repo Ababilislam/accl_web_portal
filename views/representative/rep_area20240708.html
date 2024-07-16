@@ -1,0 +1,654 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<style>
+	:root {
+            --bg_color: {{=session.bg_color}};
+            --layout_color: {{=session.layout_color}};
+            --button_color: {{=session.button_color}};
+            --button_text_color: {{=session.button_text_color}};
+            --heading_text: {{=session.heading_text}};
+            --text_color: {{=session.text_color}};
+        }
+		/* var(--bg_color);
+		var(--layout_color);
+		var(--button_color);
+		var(--button_text_color);
+		var(--heading_text);
+		var(--text_color); */
+    .page_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding-top: 10px;
+	}
+	.page_row td {
+		padding-right: 3px;
+	}
+	.page_row td input {
+		padding: 5px;
+		border: 1px solid rgb(179, 179, 179);
+		border-radius: 20px;
+		height: 30px;
+		width: 30px;
+		font-size: 13px;
+		font-weight: 300;
+	}
+    .button_row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		width: 1150px;
+		justify-content: space-between;
+		padding-top: 10px;
+	}
+	.button_row input {
+		width: 130px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+		/* border: 1px solid {{=session.button_color}} */
+	}
+	.button_row .action_button {
+		width: 50px;
+		padding: 5px 10px 5px 10px;
+		font-size: 13px;
+		color: 		var(--button_text_color);
+		/* color: {{=session.button_text_color}}; */
+		background-color: var(--button_color);
+		/* background-color: {{=session.button_color}}; */
+	}
+	.top_row {
+        display: flex;
+        flex-direction: row;
+		justify-content: space-between;
+        padding: 10px 0 10px 0;
+    }
+
+    .top_row .rep_add input,select {
+		/* width: 250px;  */
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid var(--button_color);
+		/* border: 1px solid {{=session.button_color}} */
+	}
+
+    .top_row .rep_add .status_add #st_dropdown {
+		/* width: 100px; */
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid var(--button_color);
+		/* border: 1px solid {{=session.button_color}} */
+	}
+
+    .top_row .rep_add .add_btn input {
+		height: 32px;
+		/* width: 120px; */
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		/* color: {{=session.button_text_color}}; */
+		background-color: var(--button_color);
+		/* background-color: {{=session.button_color}} */
+	}
+
+    .rep_table {
+		margin-top: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.rep_table .all_rep td {
+		padding: 10px;
+		text-align: center;
+		font-size: 14px;
+		border: 1px solid black;
+		background: var(--button_color);
+		/* background: {{=session.button_color}} */
+	}
+	
+	.rep_table td {
+		font-size: 14px;
+		font-weight: 400;
+		padding: 5px;
+		align-items: center;
+	}
+
+	.rep_table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.rep_table .single_row td {
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row #next_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: var(--button_color)
+		/* color: {{=session.button_color}} */
+	}
+
+	/* .rep_table .single_row #div_name {
+		width: 300px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row #edit_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	} */
+
+	.warning-message {
+    color: #ff0000;
+	font-size: small;
+	}
+	#search_type {
+        margin-right: 5px; /* Add 5px space to the right of search_type */
+    }
+	
+	.btns {
+		display: flex;
+		flex-direction: column;
+		padding-top: 10px;
+	}
+	.btns .col {
+		justify-content: space-between;
+	}
+	.btns h6 {
+		font-weight: 300;
+		font-size: 14px;
+		padding: 10px 0 0 0;
+		margin-bottom: 0;
+	}
+	.btns td {
+		padding-left: 3px;
+	}
+	.btns .btn-open-popup {
+		height: 32px;
+		font-size: 13px;
+		padding: 5px 10px 5px 10px;
+		border: 0;
+		border-radius: 20px;
+		color: var(--button_text_color);
+		background-color: var(--button_color)
+	}
+	.btns .btn-open-popup i {
+		padding-left: 6px;
+	}
+
+	#item_popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+		background: rgb(231, 231, 231, 0.8);
+	}
+	#item_popup.active {
+		display: flex;
+	}
+	#item_popup .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+
+	.popup-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 300px;
+		width: 700px;
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		background: var(--bg_color);
+	}
+	.popup-content form {
+		height: 100%;
+		width: 100%;
+	}
+
+	#item_popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+		background: rgb(231, 231, 231, 0.8);
+	}
+	#item_popup.active {
+		display: flex;
+	}
+	#item_popup .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+
+	.pop_up_input {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 20px; /* Adds space between columns */
+	padding: 10px 0;
+	padding-top: 10px;
+}
+
+	.pop_up_input .col1,
+	.pop_up_input .col2 {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	}
+
+	.pop_up_input .rep_add input {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+	}
+
+	.pop_up_input .rep_add .add_btn input {
+		height: 32px;
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+		border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		background-color: var(--button_color);
+	}
+	#flashMessage {
+		font-size: 12px;
+        font-weight: 400;
+        margin-top: 5px;
+	}
+
+	
+</style>
+<!-- <script>
+	function openPopup() {
+		document.getElementById('item_popup').classList.add('active');
+		// console.log('Hello')
+	}
+
+	function closePopup() {
+		document.getElementById('item_popup').classList.remove('active');
+	}
+
+
+</script> -->
+<script>
+	var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+	
+	$(function() {
+			 var valueListStr="";
+			$('#rep_input').keyup(function(){
+				$.ajax({
+					  url: base_url+'representative/rep_input_list',
+					  success: function(resStr) {
+						  valueListStr=resStr
+					  }
+					});
+	
+	
+				//-------------------------
+		  
+				var valueList = valueListStr.split(',');				
+				var searchValue=$("#rep_input").val();
+            
+	
+				//---------------- auto complete combo list
+	
+				var valueList_new=new Array();
+				lc=0;
+	
+				i =0;
+	
+				var valueStr="";				
+	
+				while (i < valueList.length)
+	
+				{
+	
+					valueStr=valueList[i];
+	
+					i=i+1;					
+	
+					var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+	
+					if (res!=null){
+	
+						valueList_new[lc]=valueStr;
+	
+						lc=lc+1;
+	
+						if (lc==30){
+	
+							break;
+	
+						};
+	
+					}else{
+	
+						continue;
+	
+					}					
+	
+				};
+	
+				//alert (ref_list_new);
+	
+				//-------------- auto complete source
+				$( "input#rep_input" ).autocomplete({
+					source: valueList_new
+				});
+		  }); 
+	
+		   //==============	   
+	
+	}); 
+
+	// territory add autocomplete
+	$(function() {
+			 var valueListStr="";
+			$('#area_input').keyup(function(){
+				$.ajax({
+					  url: base_url+'representative/area_input_list',
+					  success: function(resStr) {
+						  valueListStr=resStr
+					  }
+					});
+	
+	
+				//-------------------------
+		  
+				var valueList = valueListStr.split(',');				
+				var searchValue=$("#area_input").val();
+            
+	
+				//---------------- auto complete combo list
+	
+				var valueList_new=new Array();
+				lc=0;
+	
+				i =0;
+	
+				var valueStr="";				
+	
+				while (i < valueList.length)
+	
+				{
+	
+					valueStr=valueList[i];
+	
+					i=i+1;					
+	
+					var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+	
+					if (res!=null){
+	
+						valueList_new[lc]=valueStr;
+	
+						lc=lc+1;
+	
+						if (lc==30){
+	
+							break;
+	
+						};
+	
+					}else{
+	
+						continue;
+	
+					}					
+	
+				};
+	
+				//alert (ref_list_new);
+	
+				//-------------- auto complete source
+				$( "input#area_input" ).autocomplete({
+					source: valueList_new
+				});
+		  }); 
+	
+		   //==============	   
+	
+	}); 
+
+
+	// Filter button autocomplete
+	$(function() {
+		$('#search_value').keyup(function() {
+			var searchType = $('#search_type').val();
+			$.ajax({
+				url: base_url + 'representative/filter_autocomplete',
+				data: { search_type: searchType },
+				success: function(resStr) {
+					var valueList = resStr.split(',');
+					var searchValue = $("#search_value").val();
+					
+					var valueList_new = [];
+					var lc = 0;
+					
+					for (var i = 0; i < valueList.length; i++) {
+						var valueStr = valueList[i];
+						var res = valueStr.toUpperCase().match(searchValue.toUpperCase());
+						if (res != null) {
+							valueList_new[lc] = valueStr;
+							lc++;
+							if (lc == 30) {
+								break;
+							}
+						}
+					}
+
+					$("#search_value").autocomplete({
+						source: valueList_new
+					});
+				}
+			});
+		});
+	});
+
+</script>
+
+{{end}}
+
+<!-- page number  -->
+<div class="page_row">
+	<table width="10%">
+		<tr>
+			{{current_page = int(page)}}
+			{{start_index = max(1, current_page - 2)}}
+			{{last_index = start_index + 5}}
+			{{for no in range(start_index, last_index):}} 
+			<td>
+				<form  action="{{=URL(c='representative', f='rep_area')}}">
+					{{if current_page == no:}}
+					<input style="color: white; border: 1px solid black; background-color: {{=session.button_color}}" id="page_no" type="submit" style="margin-left: 10px;" name="page_no" value="{{=no}}">
+					{{else:}}
+					<input style="background-color: white;" id="page_no" type="submit" style="margin-left: 10px;" name="page_no" value="{{=no}}">
+					{{pass}}
+				</form>
+			</td>
+			{{pass}}
+		</tr>
+	</table>
+</div>
+
+
+
+<div class="top_row">
+    <form action="{{=URL(c='representative', f='rep_area')}}" method="post" >
+        <table width="90%">
+			<tr class="rep_add">
+				<td width="100" colspan="1">
+					<select  name="search_type" id="search_type">
+						<option selected="selected">Select a Type</option>
+						{{if session.option_selected=='mso':}}
+						<option value="mso" name="select_mso"id="select_mso" selected="selected" >Select MSO ID|Name</option>
+						{{else:}}
+						<option value="mso" name="select_mso"id="select_mso">Select MSO ID|Name</option>
+						{{pass}}
+						{{if session.option_selected=='territory':}}
+						<option value="territory" name="select_terri"id="select_terri" selected="selected" >Select Teritory ID|Name</option>
+						{{else:}}
+						<option value="territory" name="select_terri"id="select_terri" >Select Teritory ID|Name</option>
+						{{pass}}
+					</select>
+				</td>
+				<td width="200" colspan="3">
+					{{if session.search_value_reparea=='' or session.search_value_reparea==None:}}
+			
+					<input style="width: 250px;"  name="search_value" type="text" id="search_value"  value="" placeholder="Select a value" autocomplete="off" />
+			
+					{{else:}}
+			
+					<input style="width: 250px;"  name="search_value" type="text" id="search_value" value="{{=session.search_value_reparea}}" placeholder="Select a value" autocomplete="off" />
+			
+					{{pass}}
+				</td>
+				<td class="add_btn">
+					<input style="margin-left:5px; width: 80px;" class="action_button" type="submit" name="btn_filter_item" id="btn_filter_item" value="Filter"/>	
+				</td>
+				<td class="add_btn"><input style="margin-left:5px; width: 80px;" class="action_button" type="submit" name="all" id="all" value="All"/></td>
+            </tr>
+        </table>
+	</form>
+</div> 
+<div class="btns">
+	<table>
+		<tr>
+			<td class="col">
+				<h6>Total records: {{=total}}</h6>
+			</td>
+			<td><button style="width: 150px;" class="btn-open-popup" onclick="openPopup()">Add New Rep<i class="fa-solid fa-plus"></i></button></td>
+			<td>
+				<a style="text-decoration: none" href="{{=URL(c='representative',f='area_batch_upload')}}">
+					<button style="width: 130px;" class="btn-open-popup">Batch Upload<i class="fa-solid fa-upload"></i></button>
+				</a>
+			</td>
+			<td>
+				<a style="text-decoration: none" href="{{=URL(c='representative',f='download_rep_area')}}">
+					<button style="width: 110px;" class="btn-open-popup">Download<i class="fa-solid fa-cloud-arrow-down"></i></button>
+				</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<!-- rep display table  -->
+<table class="rep_table" width="100%">
+	<form name="form1" method="post">
+		<tr class="all_rep">
+			<td width="110px">MSO</td>
+			<td width="200px">Territory (Route)</td>
+            <td width="10px">Delete</td>
+		</tr>
+	</form>
+
+	{{for i in range(len(rep_records)):
+		index = i 
+		rep = rep_records[i]
+		rep_id = str(rep["rep_id"])
+		rep_name = str(rep["rep_name"])
+        area_id = str(rep["area_id"])
+        area_name = str(rep["area_name"])
+		record_id=rep["id"]
+
+	}}
+	<form action="{{=URL(c='representative', f='rep_area')}}" method="post" >
+		<tr class="single_row">
+			<td width="45%" align="left">{{=rep_id}} | {{=rep_name}}</td>
+			
+			<td  width="45%" align="left">{{=area_id}} | {{=area_name}}</td>
+		   
+			<td  width="10%" class="next_btn">
+				<input type="hidden" name="delete_record_id" id="delete_record_id" value="{{=record_id}}">
+				<input type="submit" name="delete_btn" id="delete_btn" value="X"   class="button_update" 
+				style="border: 1px solid black; background: rgb(240, 237, 237); color: red;"/>
+			</td>
+		</tr>
+	</form>
+	
+	{{pass}}
+</table>
+
+<!-- Popup Section -->
+<div class="popup-container" id="item_popup">
+	<div class="popup-content">
+		<form name="form1" action="{{=URL(c='representative',f='rep_area')}}" method="post">
+			<div class="top_row" style="display: flex; justify-content: space-between; align-items: center;">
+				<h4 style="margin: auto; padding-left: 150px; color: var(--button_color);" >Add Rep</h4>
+				<button onclick="closePopup()" style="margin-left: auto;"><i class="fa-solid fa-xmark" style="color: red;"></i></button>
+			</div>
+			<div class="pop_up_input">
+				<div class="col1">
+					<table>
+						<tr class="rep_add">
+							<td class="id_add">
+								<input style="width:200px" type="text" id="rep_input" name="rep_input" placeholder="Select MSO" autocomplete="off">
+							</td>
+						</tr>	
+									
+					</table>
+				</div>
+				<div class="col2" style="padding-top: 35px;">
+					<table>
+						<tr class="rep_add" >
+							<td class="id_add">
+								<input style="width:200px" type="text" id="area_input" name="area_input" placeholder="Select Territory" autocomplete="off">
+							</td>
+						</tr>			
+						
+						<tr class="rep_add">
+							<td class="add_btn" style="text-align: right; padding-top: 5px;">
+								<input type="submit" name="add_btn" id="add_btn" value="Add New Rep"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+<script>
+	// onclick="loadContent(`{{=URL(c='representative', f='rep')}}`)"
+    // url 
+    function loadContent(url) {
+        const content = document.getElementById('content');
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                content.innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching content:', error));
+    }
+</script>

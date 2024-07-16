@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accl</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 20px; /* Optional: Add some padding for better visual appearance */
+        }
+    </style>
+  <h1>ACCL</h1>
+</head>
+  <body>
+     <style>
+        body {
+           background-color: #cae2c8
+        }
+
+      
+    </style>
+    
+   
+  
+    {{block header}}
+    {{end}}
+
+    <div class="container-fluid main-container">
+      {{include}}
+      {{=response.toolbar() if response.show_toolbar else ''}}
+    </div>
+
+    
+ 
+
+
+  </body>
+</html>
+
+

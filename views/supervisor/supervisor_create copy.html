@@ -1,0 +1,610 @@
+{{extend 'layout.html'}}
+ 
+  <link rel="stylesheet" href="{{=URL('static', 'js_and_css/ui.theme.css')}}" type="text/css" />
+  <link rel="stylesheet" href="{{=URL('static', 'js_and_css/jquery-ui.css')}}" type="text/css" />
+  <link rel="stylesheet" href="{{=URL('static', 'js_and_css/style.css')}}" type="text/css" />
+   <script src="{{=URL('static','js_and_css/jquery-1.8.2.js')}}"></script>
+    <script src="{{=URL('static','js_and_css/jquery-ui.js')}}"></script>
+  
+  
+  <style type="text/css">
+	 input[type=text], input[type=password]{
+		margin: 2px 0px 2px 0px;
+	}
+	div.error {
+		width: auto;
+	}
+	
+	#sm_rep_rep_id{
+		width: 100px;
+	}
+	#sm_rep_name{
+		width: 250px;
+	}
+	#sm_rep_mobile_no{
+		width: 120px;
+	}
+	#sm_rep_status{
+	width:100px;
+	}
+	#sm_rep_level_id{
+		width: 120px;
+	}
+	
+.page_color,body{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:13px;	
+	}
+
+	:root {
+            --bg_color: {{=session.bg_color}};
+            --layout_color: {{=session.layout_color}};
+            --button_color: {{=session.button_color}};
+            --button_text_color: {{=session.button_text_color}};
+            --heading_text: {{=session.heading_text}};
+            --text_color: {{=session.text_color}};
+        }
+	.page_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding-top: 10px;
+	}
+
+	.page_row td {
+		padding-right: 3px;
+	}
+
+	.page_row td input {
+		padding: 5px;
+		border: 1px solid rgb(179, 179, 179);
+		border-radius: 20px;
+		height: 30px;
+		width: 30px;
+		font-size: 13px;
+		font-weight: 300;
+	}
+
+	.top_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 10px 0 10px 0;
+	}
+
+	.search_type_style {
+		width: 80px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		color: var(--button_text_color);
+		/* background-color: var(--button_color) */
+		/* border: 1px solid var(--button_color) */
+	}
+
+	.top_row .rep_add input {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+
+		border: 1px solid var(--button_color)
+				
+		}
+	
+
+	.top_row .rep_add .status_add #search_type {
+		width: 100px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+
+		border: 1px solid var(--button_color)
+	}
+	.top_row .rep_add .status_add #st_dropdown {
+		width: 100px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+
+		border: 1px solid var(--button_color)
+	}
+
+	.top_row .rep_add .add_btn input {
+		height: 32px;
+		width: 120px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+		border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		background-color: var(--button_color)
+	}
+
+	.sup_table {
+		width: 85%;
+		margin-top: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.sup_table .all_sup td {
+		padding: 10px;
+		text-align: center;
+		font-size: 14px;
+		border: 1px solid black;
+
+		background: var(--button_color)
+	
+	}
+
+	.sup_table td {
+		font-size: 14px;
+		font-weight: 400;
+		padding: 5px;
+		align-items: center;
+	}
+
+	.sup_table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.sup_table .single_row td {
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.sup_table .single_row #next_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+
+		color: var(--button_color)
+		/* color: {
+				{
+				=session.button_color
+			}
+		} */
+	}
+
+
+	input[type=text], input[type=password]{
+
+		margin: 2px 0px 2px 0px;
+
+	}
+
+	div.error {
+
+		width: auto;
+
+	}
+
+
+
+	#sm_rep_rep_id{
+
+		width: 80px;
+
+	}
+
+	#sm_rep_name{
+
+		width: 250px;
+
+	}
+
+	#sm_rep_status{
+
+		width: 120px;
+
+	}
+
+
+
+	#sm_rep_mobile_no{
+
+		width: 120px;
+
+	}
+
+	.page_color,body{
+
+		font-family:Arial, Helvetica, sans-serif;
+
+		font-size:13px;	
+
+	}
+
+	.popup-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 300px;
+		width: 700px;
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		background: var(--bg_color);
+	}
+	.popup-content form {
+		height: 100%;
+		width: 100%;
+	}
+
+	#item_popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+		background: rgb(231, 231, 231, 0.8);
+	}
+	#item_popup.active {
+		display: flex;
+	}
+	#item_popup .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+
+	.pop_up_input {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 20px; /* Adds space between columns */
+	padding: 10px 0;
+	padding-top: 10px;
+}
+
+	.pop_up_input .col1,
+	.pop_up_input .col2,
+	.pop_up_input .col3 {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	}
+
+	.pop_up_input .rep_add input {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+	}
+
+	.pop_up_input .rep_add .status_add #st_dropdown {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+	}
+
+	.pop_up_input .rep_add .add_btn input {
+		height: 32px;
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+		border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		background-color: var(--button_color);
+	}
+	#flashMessage {
+		font-size: 12px;
+        font-weight: 400;
+        margin-top: 5px;
+	}
+
+	.circle-button {
+    border-radius: 50%;
+	border: 1px solid black;
+    width: 30px; 
+    height: 30px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 10px; 
+	background-color: var(--bg_color);
+	color: var(--button_color);
+    transition: background-color 0.3s, transform 0.3s; 
+}
+
+.circle-button.active {
+	font-weight: bold important;
+    background-color: var(--button_color);
+	color: var(--bg_color);
+    transform: scale(1.2); 
+}
+.circle-button:hover {
+    background-color: var(--button_color);
+	color: white;
+    transform: scale(1.1); 
+}
+ </style>
+ 
+ <script>
+var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+
+$(function() {
+		$('#sm_rep_level_id').attr('placeholder','Select Level');
+		
+		
+	 	var valueListStr="";
+		
+		$('#search_type').blur(function(){
+			if ($('#search_type').val()=='SupID'){
+				//alert(base_url+'default/get_route_list');
+				$.ajax({
+					  url: base_url+'supervisor/get_supervisor_list',
+					  success: function(resStr) {
+						  valueListStr=resStr
+					  }
+					});
+			}
+			<!---------Shima Start------->
+			else if ($('#search_type').val()=='Type'){
+				valueListStr='SIN'
+			}
+			<!---------Shima End------->
+			else if ($('#search_type').val()=='Status'){
+				valueListStr='ACTIVE,INACTIVE'
+				
+			};
+			
+	 	});
+	 
+		$('#search_value').keyup(function(){
+			//-------------------------
+			var valueList = valueListStr.split(',');				
+			var searchValue=$("#search_value").val();
+			
+			//---------------- auto complete combo list
+			var valueList_new=new Array();
+			lc=0;
+			i =0;
+			var valueStr="";				
+			while (i < valueList.length)
+			{
+				valueStr=valueList[i];
+				i=i+1;					
+				var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+				if (res!=null){
+					valueList_new[lc]=valueStr;
+					lc=lc+1;
+					if (lc==30){
+						break;
+					};
+				}else{
+					continue;
+				}					
+			};
+			//alert (ref_list_new);
+			
+			//-------------- auto complete source
+			$( "input#search_value" ).autocomplete({
+				source: valueList_new
+			});
+		
+	  }); 
+	  
+	   //==============	 
+	   var valueListStr2="";		
+		$('#sm_rep_level_id').keyup(function(){
+			$.ajax({
+				  url: base_url+'default/get_only_level_list',
+				  success: function(resStr) {
+					  valueListStr2=resStr
+				  }
+				});
+			
+			//-------------------------
+			var valueList = valueListStr2.split(',');				
+			var searchValue=$("#sm_rep_level_id").val();
+			
+			//---------------- auto complete combo list
+			var valueList_new=new Array();
+			lc=0;
+			i =0;
+			var valueStr="";				
+			while (i < valueList.length)
+			{
+				valueStr=valueList[i];
+				i=i+1;					
+				var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+				if (res!=null){
+					valueList_new[lc]=valueStr;
+					lc=lc+1;
+					if (lc==30){
+						break;
+					};
+				}else{
+					continue;
+				}					
+			};
+			//alert (ref_list_new);
+			
+			//-------------- auto complete source
+			$( "input#sm_rep_level_id" ).autocomplete({
+				source: valueList_new
+			});
+		
+	  }); 
+	   //==============	  
+}); 
+
+</script>
+
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+  <!-- <tr height="30px" style="background-color: var(--button_color);" > -->
+  <tr height="30px"  >
+    <!-- <td width="500"><span class="blackCatTitle">Supervisor</span></td> -->
+    <form action="{{=URL(c='supervisor',f='field_force_home')}}" method="post">
+	<td width="415" align="right"><!--<input name="" type="submit"  value="Back"/>--></td>
+	</form>
+    <td>&nbsp;</td>
+  </tr>
+  <!-- <tr  height="1px" style="background-color:#CCCCCC;"> -->
+	    <td colspan="3" ></td>
+  </tr>
+  </table>
+  
+  
+  <table width="100%" height="500px"  cellspacing="0" cellpadding="0" class="page_color" id="table_big" >
+  <tr height="100%"  style="vertical-align:top;">
+    <td>
+	<table width="100%"   cellpadding="0" cellspacing="0"  >
+      <tr>
+        <td width="10px">&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>
+          <table width="900" border="0" cellpadding="1" cellspacing="1" class="top_row" >
+		   <form id="form1" name="form1" method="post" action="{{=URL(c='supervisor',f='supervisor_create')}}">
+            <tr align="left" class="rep_add"  height="20px" ;"vertical-align:middle">
+              <td width="100" class="status_add" >
+                <select name="search_type" id="search_type" style="width:180px" class="">
+                  
+                  <option selected="selected">Select a Type</option>
+                	{{if session.search_type_sup=='SupID':}}
+                    <option value="SupID" selected="selected">Sup ID/Name/Mobile</option>
+                    {{else:}}<option value="SupID" >Sup ID/Name/Mobile</option>
+                {{pass}}
+                
+			<!---------Shima Start------->
+                {{if session.search_type_sup=='Type':}}
+                    <option value="Type" selected="selected">Type</option>
+                   {{else:}}<option value="Type" >Type</option>
+                {{pass}}
+                
+			<!---------Shima End------->
+                {{if session.search_type_sup=='Status':}}
+                    <option value="Status" selected="selected">Status</option>
+                    {{else:}}<option value="Status" >Status</option>
+                {{pass}}
+					
+                </select>
+              </td>
+              <td width="257" class="id_add" >
+              {{if session.search_value_sup=='' or session.search_value_sup==None:}}
+              	<input  name="search_value" type="text" id="search_value" size="25" value="" placeholder="Select a value" autocomplete="off" style="width:300px"/>
+              {{else:}}
+              	<input  name="search_value" type="text" id="search_value" size="25" value="{{=session.search_value_sup}}" placeholder="Select a value" autocomplete="off" style="width:300px"/>
+              {{pass}}
+              
+              </td>
+              <td width="55" align="right"  ><input type="submit" name="btn_filter" id="btn_filter" value="Filter"   class="button_update"/></td>
+              <td width="39" align="right"  ><input type="submit" name="btn_filter_all" id="btn_filter_all" value="All"   class="button_update"/></td>
+              <td align="right" style="width: 350px;" >
+				<span><a href="{{=URL(c='supervisor',f='download_supervisor')}}">
+				 <input type="button" name="" id="" value="Download"   class="button_update"/>
+			    </a>
+			  <a href="{{=URL(c='supervisor',f='supervisor_batch_upload')}}">
+            	<input type="button" name="Input" id="Input" value="Batch Upload"   class="button_update"/>
+              </a>
+			</span>
+                </td>
+            </tr>
+			  </form>
+          </table>
+		  <strong>Total:</strong> {{=totalCount}}
+		
+		  
+		  
+		  <br/>
+
+			 <table border="1" cellpadding="1" cellspacing="1" class="sup_table" >
+               <tr align="left" class="all_sup"  height="20px" ;"vertical-align:middle">
+                 <td style="width: 50px;">Sup ID </td>
+                 <td width = "100px">Name</td>
+                 <td width="150" >Mobile</td>
+                 <td width="50" >Type</td>
+                 <td width="80" align="center" >Status</td>
+                 <td width="80" >Password</td>
+                 <td width="100" >&nbsp;Device Name</td>
+                 <td width="100" >Mobile Mac</td>
+                 <!-----------Shima Start------->
+                 <td width="50" align="right" ></td>
+               </tr>
+               
+			   
+			   {{=form.custom.begin}}
+		
+		  <tr  align="left" class=""  style="vertical-align:middle">
+			<td >{{=form.custom.widget.rep_id}}</td>
+			<td>{{=form.custom.widget.name}}</td>
+			<td >{{=form.custom.widget.mobile_no}}</td>
+			<td >
+			 <select name="supType" id="supType" style="width:100px" >
+									   <option selected="selected"></option>
+									   <option value="SIN" >SIN</option>
+									   <option value="PHARMA" >PHARMA</option>
+									   <option value="SURVEY" >SURVEY</option>
+									   <option value="TENDER" >TENDER</option>
+									   <option value="DEMO" >DEMO</option>
+									   <option value="EXP" >EXP</option>
+			  </select>
+			</td>
+			<td align="center" >{{=form.custom.widget.status}}</td>
+			<td width="60" >&nbsp;</td>
+			<td width="60" >&nbsp;</td>
+
+			<td width="60" >&nbsp;</td>
+			<td align="right"  >{{=form.custom.submit}}</td>
+		  </tr>
+		  {{=form.custom.end}}
+			   
+			   
+			   
+			   {{ p=0}} 		  
+			   {{for i,record in enumerate(records):}}
+                   {{ if i==items_per_page: break}}
+      				
+                  <tr  align="left" class="blackCat"  style="font-size:13px"> 
+                  <td width="100" >{{=record.rep_id}}</td>
+                  <td >{{=record.name}}</td>
+                  <td width="150" >{{=record.mobile_no}}</td>
+                  <td width="30" >{{=record.note}}</td>
+                  <!-----------Shima End------->
+                  <td width="80" align="center" >{{=record.status}}</td>
+                  <td width="80" >*****</td>
+                  <td width="150" >{{=record.field1}}</td>
+                  <td width="150" >{{=record.sync_code}}</td>
+                  <form id="form1" name="form1" method="post" action="{{=URL(c='supervisor',f='supervisor_edit',args=[page,record.id])}}">
+                  <td width="50" align="right"  ><input type="submit" name="btn_go" id="btn_go" value="&gt;&gt;" class="button_update"/>     </td>
+                   </form>
+                </tr>
+ 				
+			   {{pass}}
+		    </table>
+			 <p>&nbsp;</p>
+	      </td></tr>
+    </table>
+     
+{{if page:}}
+&nbsp;&nbsp;<a href="{{=URL(args=[page-page])}}">first</a> | 
+&nbsp;&nbsp;<a href="{{=URL(args=[page-1])}}">previous</a> |
+{{pass}}
+
+{{if len(records)>items_per_page:}}
+&nbsp;&nbsp;<a href="{{=URL(args=[page+1])}}">next</a>
+{{pass}}
+<!--end-->
+	</td>
+  </tr>
+</table>
+<br />
+<br />
+

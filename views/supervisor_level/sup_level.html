@@ -1,0 +1,833 @@
+{{extend 'layout.html'}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/ui.theme.css')}}" type="text/css" />
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/jquery-ui.css')}}" type="text/css" />
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/style.css')}}" type="text/css" />
+<script src="{{=URL('static','js_and_css/jquery-1.8.2.js')}}"></script>
+<script src="{{=URL('static','js_and_css/jquery-ui.js')}}"></script>
+{{block head}}
+
+<style>
+	:root {
+            --bg_color: {{=session.bg_color}};
+            --layout_color: {{=session.layout_color}};
+            --button_color: {{=session.button_color}};
+            --button_text_color: {{=session.button_text_color}};
+            --heading_text: {{=session.heading_text}};
+            --text_color: {{=session.text_color}};
+        }
+		/* var(--bg_color);
+		var(--layout_color);
+		var(--button_color);
+		var(--button_text_color);
+		var(--heading_text);
+		var(--text_color); */
+    .page_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding-top: 10px;
+	}
+	.page_row td {
+		padding-right: 3px;
+	}
+	.page_row td input {
+		padding: 5px;
+		border: 1px solid rgb(179, 179, 179);
+		border-radius: 20px;
+		height: 30px;
+		width: 30px;
+		font-size: 13px;
+		font-weight: 300;
+	}
+    .button_row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		width: 1150px;
+		justify-content: space-between;
+		padding-top: 10px;
+	}
+	.button_row input {
+		width: 130px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+		/* border: 1px solid {{=session.button_color}} */
+	}
+	.button_row .action_button {
+		width: 50px;
+		padding: 5px 10px 5px 10px;
+		font-size: 13px;
+		color: 		var(--button_text_color);
+		/* color: {{=session.button_text_color}}; */
+		background-color: var(--button_color);
+		/* background-color: {{=session.button_color}}; */
+	}
+	.top_row {
+        display: flex;
+        flex-direction: row;
+		justify-content: space-between;
+        padding: 10px 0 10px 0;
+    }
+
+    .top_row .rep_add input,select {
+		/* width: 250px;  */
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid var(--button_color);
+		/* border: 1px solid {{=session.button_color}} */
+	}
+
+    .top_row .rep_add .status_add #st_dropdown {
+		/* width: 100px; */
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid var(--button_color);
+		/* border: 1px solid {{=session.button_color}} */
+	}
+
+    .top_row .rep_add .add_btn input {
+		height: 32px;
+		/* width: 120px; */
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		/* color: {{=session.button_text_color}}; */
+		background-color: var(--button_color);
+		/* background-color: {{=session.button_color}} */
+	}
+
+    .rep_table {
+		margin-top: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.rep_table .all_rep td {
+		padding: 10px;
+		text-align: center;
+		font-size: 14px;
+		border: 1px solid black;
+		background: var(--button_color);
+		/* background: {{=session.button_color}} */
+	}
+	
+	.rep_table td {
+		font-size: 14px;
+		font-weight: 400;
+		padding: 5px;
+		align-items: center;
+	}
+
+	.rep_table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.rep_table .single_row td {
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row #next_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: var(--button_color)
+		/* color: {{=session.button_color}} */
+	}
+
+	/* .rep_table .single_row #div_name {
+		width: 300px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row #edit_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	} */
+
+	.warning-message {
+    color: #ff0000;
+	font-size: small;
+	}
+	#search_type {
+        margin-right: 5px; /* Add 5px space to the right of search_type */
+    }
+	
+	.btns {
+		display: flex;
+		flex-direction: column;
+		padding-top: 10px;
+	}
+	.btns .col {
+		justify-content: space-between;
+	}
+	.btns h6 {
+		font-weight: 300;
+		font-size: 14px;
+		padding: 10px 0 0 0;
+		margin-bottom: 0;
+	}
+	.btns td {
+		padding-left: 3px;
+	}
+	.btns .btn-open-popup {
+		height: 32px;
+		font-size: 13px;
+		padding: 5px 10px 5px 10px;
+		border: 0;
+		border-radius: 20px;
+		color: var(--button_text_color);
+		background-color: var(--button_color)
+	}
+	.btns .btn-open-popup i {
+		padding-left: 6px;
+	}
+
+	#item_popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+		background: rgb(231, 231, 231, 0.8);
+	}
+	#item_popup.active {
+		display: flex;
+	}
+	#item_popup .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+
+	.popup-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 300px;
+		width: 700px;
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		background: var(--bg_color);
+	}
+	.popup-content form {
+		height: 100%;
+		width: 100%;
+	}
+
+	#item_popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+		background: rgb(231, 231, 231, 0.8);
+	}
+	#item_popup.active {
+		display: flex;
+	}
+	#item_popup .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+
+	.pop_up_input {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 20px; /* Adds space between columns */
+	padding: 10px 0;
+	padding-top: 10px;
+}
+
+	.pop_up_input .col1,
+	.pop_up_input .col2 {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	}
+
+	.pop_up_input .rep_add input {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+	}
+
+	.pop_up_input .rep_add .add_btn input {
+		height: 32px;
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+		border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		background-color: var(--button_color);
+	}
+	#flashMessage {
+		font-size: 12px;
+        font-weight: 400;
+        margin-top: 5px;
+	}
+
+	.data_input {
+        width: 150px;
+		height: 30px;
+        border: 2px solid var(--button_color); /* Green border */
+        border-radius: 20px; /* More rounded corners */
+        /* padding: 10px; Adjust padding as needed */
+        outline: none; /* Remove outline effect */
+        font-size: 13px; /* Adjust font size as needed */
+        box-sizing: border-box; /* Ensures padding doesn't affect width */
+		padding-left: 10px;
+	}
+
+
+	.circle-button {
+    border-radius: 50%;
+	border: 1px solid black;
+    width: 30px; 
+    height: 30px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 10px; 
+	background-color: var(--bg_color);
+	color: var(--button_color);
+    transition: background-color 0.3s, transform 0.3s; 
+}
+
+.circle-button.active {
+	font-weight: bold important;
+    background-color: var(--button_color);
+	color: var(--bg_color);
+    transform: scale(1.2); 
+}
+.circle-button:hover {
+    background-color: var(--button_color);
+	color: white;
+    transform: scale(1.1); 
+}
+
+.wt_txt{
+	color: var(--button_text_color);
+}	
+
+</style>
+
+<script>
+	var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+	
+	$(function() {
+			 var valueListStr="";
+			$('#sup_input').keyup(function(){
+				$.ajax({
+					  url: base_url+'supervisor_level/sup_input_list',
+					  success: function(resStr) {
+						  valueListStr=resStr
+					  }
+					});
+	
+	
+				//-------------------------
+		  
+				var valueList = valueListStr.split(',');				
+				var searchValue=$("#sup_input").val();
+            
+	
+				//---------------- auto complete combo list
+	
+				var valueList_new=new Array();
+				lc=0;
+	
+				i =0;
+	
+				var valueStr="";				
+	
+				while (i < valueList.length)
+	
+				{
+	
+					valueStr=valueList[i];
+	
+					i=i+1;					
+	
+					var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+	
+					if (res!=null){
+	
+						valueList_new[lc]=valueStr;
+	
+						lc=lc+1;
+	
+						if (lc==30){
+	
+							break;
+	
+						};
+	
+					}else{
+	
+						continue;
+	
+					}					
+	
+				};
+	
+				//alert (ref_list_new);
+	
+				//-------------- auto complete source
+				$( "input#sup_input" ).autocomplete({
+					source: valueList_new
+				});
+		  }); 
+	
+		   //==============	   
+	
+	}); 
+
+	// territory add autocomplete
+	$(function() {
+			 var valueListStr="";
+			$('#level_input').keyup(function(){
+				$.ajax({
+					  url: base_url+'supervisor_level/sup_lvl_input_list',
+					  success: function(resStr) {
+						  valueListStr=resStr
+					  }
+					});
+	
+	
+				//-------------------------
+		  
+				var valueList = valueListStr.split(',');				
+				var searchValue=$("#level_input").val();
+            
+	
+				//---------------- auto complete combo list
+	
+				var valueList_new=new Array();
+				lc=0;
+	
+				i =0;
+	
+				var valueStr="";				
+	
+				while (i < valueList.length)
+	
+				{
+	
+					valueStr=valueList[i];
+	
+					i=i+1;					
+	
+					var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+	
+					if (res!=null){
+	
+						valueList_new[lc]=valueStr;
+	
+						lc=lc+1;
+	
+						if (lc==30){
+	
+							break;
+	
+						};
+	
+					}else{
+	
+						continue;
+	
+					}					
+	
+				};
+	
+				//alert (ref_list_new);
+	
+				//-------------- auto complete source
+				$( "input#level_input" ).autocomplete({
+					source: valueList_new
+				});
+		  }); 
+	
+		   //==============	   
+	
+	}); 
+
+
+	// Filter button autocomplete
+/////////////////////////////////////////////start 	//////////////////////////////////
+
+
+
+///	//////////////////////////////end ///////////////////////////////////////
+$(function () {
+        $.ajax({
+            url: base_url + 'supervisor_level/get_supervisor_list',
+            success: function (resStr) {
+                valueListStr_sm = resStr
+            }
+        });
+    
+        $('#search_sup').keyup(function () {
+            //-------------------------
+            var valueList = valueListStr_sm.split(',');
+            var searchValue = $("#search_sup").val();
+
+            //---------------- auto complete combo list
+            var valueList_new = new Array();
+            lc = 0;
+            i = 0;
+            var valueStr = "";
+            while (i < valueList.length) {
+                valueStr = valueList[i];
+                i = i + 1;
+                var res = valueStr.toUpperCase().match(searchValue.toUpperCase());
+                if (res != null) {
+                    valueList_new[lc] = valueStr;
+                    lc = lc + 1;
+                    if (lc == 30) {
+                        break;
+                    };
+                } else {
+                    continue;
+                }
+            };
+            //alert (ref_list_new);
+
+            //-------------- auto complete source
+            $("input#search_sup").autocomplete({
+                source: valueList_new
+            });
+
+        });
+    });
+
+
+	// sup_list autocomplete
+	$(function () {
+        $.ajax({
+            url: base_url + 'supervisor_level/get_supervisor_lvl_list',
+            success: function (resStr) {
+                valuelvlListStr_sm = resStr
+            }
+        });
+    
+        $('#search_value').keyup(function () {
+            //-------------------------
+            var valueList = valuelvlListStr_sm.split(',');
+            var searchValue = $("#search_value").val();
+
+            //---------------- auto complete combo list
+            var valueList_new = new Array();
+            lc = 0;
+            i = 0;
+            var valueStr = "";
+            while (i < valueList.length) {
+                valueStr = valueList[i];
+                i = i + 1;
+                var res = valueStr.toUpperCase().match(searchValue.toUpperCase());
+                if (res != null) {
+                    valueList_new[lc] = valueStr;
+                    lc = lc + 1;
+                    if (lc == 30) {
+                        break;
+                    };
+                } else {
+                    continue;
+                }
+            };
+            //alert (ref_list_new);
+
+            //-------------- auto complete source
+            $("input#search_value").autocomplete({
+                source: valueList_new
+            });
+
+        });
+    });
+
+</script>
+{{end}}
+
+<!-- page number  -->
+
+
+<div class="page_row">
+	<table>
+		<tr class="rep_add">
+			{{current_page = int(page)}}
+			{{first_page = 0}}
+			{{last_page = (total//items_per_page)}}
+			{{previous_last = last_page-1}}
+			{{imidate_previous = current_page-1}}
+			{{next_page = current_page+1}}
+			{{start_count = max(1, current_page - 1)}}
+			{{next_count = start_count + 1}}
+			{{for no in range(start_count, next_count):}}
+
+				{{if current_page == 0:}}
+					
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button ml-2" hidden> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button ml-2" hidden>{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					{{ if total > items_per_page:}}
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button ml-2">{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button ml-2">{{=last_page}}</a>
+					{{pass}}
+				{{elif current_page == 1:}}
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button ml-2" hidden> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button ml-2">{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button ml-2">{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button ml-2">{{=last_page}}</a>
+				{{elif (current_page > 1) and (current_page < previous_last):}}
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button  ml-2"> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button  ml-2">{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button  ml-2">{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button  ml-2">{{=last_page}}</a>
+				{{elif current_page == previous_last:}}
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button  ml-2"> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button  ml-2">{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button  ml-2">{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button  ml-2" hidden>{{=last_page}}</a>
+				{{elif current_page == last_page:}}
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button  ml-2"> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button  ml-2">{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button  ml-2" hidden>{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button  ml-2" hidden>{{=last_page}}</a>
+				{{pass}}
+				
+			{{pass}}
+
+		</tr>
+	</table>
+</div>
+
+
+
+
+
+
+
+<div class="top_row">
+    <form action="{{=URL(c='supervisor_level', f='sup_level')}}" method="post" >
+        <table width="90%">
+            	
+
+			<tr class="rep_add">
+				<td width="100" colspan="1">
+					<!-- <select  name="search_type" id="search_type">
+						<option selected="selected">Select a Type</option>
+						{{if session.option_selected=='sup':}}
+						<option value="sup" name="select_sup"id="select_sup" selected="selected" >Select Sup ID|Name</option>
+						{{else:}}
+						<option value="sup" name="select_sup"id="select_sup">Select Sup ID|Name</option>
+						{{pass}}
+						{{if session.option_selected=='level':}}
+						<option value="level" name="select_sup_lvl"id="select_sup_lvl" selected="selected" >Select Level ID|Name</option>
+						{{else:}}
+						<option value="level" name="select_sup_lvl"id="select_sup_lvl" >Select Level ID|Name</option>
+						{{pass}}
+					</select> -->
+
+					{{if session.search_sup=='' or session.search_sup==None:}}
+			
+					<input style="width: 250px;"  name="search_sup" type="text" id="search_sup"  value="" placeholder="Select a supervisor" autocomplete="off" />
+			
+					{{else:}}
+			
+					<input style="width: 250px;"  name="search_sup" type="text" id="search_sup" value="{{=session.search_sup}}" placeholder="Select a supervisor" autocomplete="off" />
+			
+					{{pass}}
+					
+				</td>
+				<td width="200" colspan="3">
+					{{if session.search_lvl=='' or session.search_lvl==None:}}
+			
+					<input style="width: 250px;"  name="search_value" type="text" id="search_value"  value="" placeholder="Select a supervisor level" autocomplete="off" />
+			
+					{{else:}}
+			
+					<input style="width: 250px;"  name="search_value" type="text" id="search_value" value="{{=session.search_lvl}}" placeholder="Select a supervisor level" autocomplete="off" />
+			
+					{{pass}}
+				</td>
+				<td class="add_btn">
+					<input style="margin-left: 5px; width: 80px;" class="action_button" type="submit" name="btn_filter_item" id="btn_filter_item" value="Filter"/>	
+				</td>
+				<td class="add_btn"><input style="margin-left: 5px; width: 80px;" class="action_button" type="submit" name="all" id="all" value="All"/></td>
+			</tr>
+		</form>
+        </table>
+</div> 
+<div class="btns">
+	
+	<table>
+		<tr>
+			<td class="col">
+				<h6>Total records: {{=total}}</h6>
+			</td>
+
+			<form  action="{{=URL(c='supervisor_level', f='sup_level')}}" method="post">
+			<td>
+				<input class="data_input" type="text" id="sup_input" name="sup_input" placeholder="Select Sup" autocomplete="off">
+			</td>
+			<td>
+				<input class="data_input" type="text" id="level_input" name="level_input" placeholder="Select Level" autocomplete="off">
+			</td>
+			
+			<td>
+				
+				<input type="submit" class="btn-open-popup"  class="fa-solid fa-plus"name="add_btn" value="Add New Sup " style="width: 150px;">
+				
+			</td>
+			</form>
+			
+			<!-- <td><button style="width: 150px;" class="btn-open-popup" onclick="openPopup()">Add New Rep<i class="fa-solid fa-plus"></i></button></td> -->
+			<td>
+				<a style="text-decoration: none" href="{{=URL(c='supervisor_level',f='sup_lvl_batch_upload')}}">
+					<!-- <button style="width: 130px;" class="btn-open-popup">Batch Upload<i class="fa-solid fa-upload"></i></button> -->
+					<button style="width: 130px;" class="btn-open-popup">Batch Upload</button>
+				</a>
+			</td>
+			<td>
+				<a style="text-decoration: none" href="{{=URL(c='supervisor_level',f='download_sup_lvl')}}">
+					<!-- <button style="width: 110px;" class="btn-open-popup">Download<i class="fa-solid fa-cloud-arrow-down"></i></button> -->
+					<button style="width: 110px;" class="btn-open-popup">Download</i></button>
+				</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<!-- rep display table  -->
+<table class="rep_table" width="100%">
+	<form name="form1" method="post">
+		<tr class="all_rep">
+			<td width="110px" class="wt_txt">Sup Id | Name</td>
+			<td width="200px" class="wt_txt">Sup level | level Name | depth</td>
+            <td width="10px" class="wt_txt">Delete</td>
+		</tr>
+	</form>
+
+	{{for i in range(len(rep_records)):
+		index = i 
+		rep = rep_records[i]
+
+		record_id = str(rep["id"])
+		sup_id = str(rep["sup_id"])
+		sup_name = str(rep["sup_name"])
+        level_id = str(rep["level_id"])
+        level_name = str(rep["level_name"])
+        level_depth_no = str(rep["level_depth_no"])
+
+	}}
+	<form action="{{=URL(c='supervisor_level', f='sup_level')}}" method="post" >
+		<tr class="single_row">
+			<td width="45%" align="left">{{=sup_id}} | {{=sup_name}}</td>
+			
+			<td  width="45%" align="left">{{=level_id}} | {{=level_name}} | {{=level_depth_no}}</td>
+		   
+			<td  width="10%" class="next_btn">
+				<input type="hidden" name="delete_record_id" id="delete_record_id" value="{{=record_id}}">
+				<input type="submit" name="delete_btn" id="delete_btn" value="X"   class="button_update" 
+				style="border: 1px solid black; background: rgb(240, 237, 237); color: red;"/>
+			</td>
+		</tr>
+	</form>
+	
+	{{pass}}
+</table>
+
+
+
+<!-- Popup Section -->
+<div class="popup-container" id="item_popup">
+	<div class="popup-content">
+		<form name="form1" action="{{=URL(c='supervisor_level',f='rep_area')}}" method="post">
+			<div class="top_row" style="display: flex; justify-content: space-between; align-items: center;">
+				<h4 style="margin: auto; padding-left: 150px; color: var(--button_color);" >Add Rep</h4>
+				<button onclick="closePopup()" style="margin-left: auto;"><i class="fa-solid fa-xmark" style="color: red;"></i></button>
+			</div>
+			<div class="pop_up_input">
+				<div class="col1">
+					<table>
+						<tr class="rep_add">
+							<td class="id_add">
+								<input style="width:200px" type="text" id="rep_input" name="rep_input" placeholder="Select MSO" autocomplete="off">
+							</td>
+						</tr>	
+									
+					</table>
+				</div>
+				<div class="col2" style="padding-top: 35px;">
+					<table>
+						<tr class="rep_add" >
+							<td class="id_add">
+								<input style="width:200px" type="text" id="area_input" name="area_input" placeholder="Select Territory" autocomplete="off">
+							</td>
+						</tr>			
+						
+						<tr class="rep_add">
+							<td class="add_btn" style="text-align: right; padding-top: 5px;">
+								<input type="submit" name="add_btn" id="add_btn" value="Add New Rep"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+
+<script>
+	// onclick="loadContent(`{{=URL(c='representative', f='rep')}}`)"
+    // url 
+    function loadContent(url) {
+        const content = document.getElementById('content');
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                content.innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching content:', error));
+    }
+
+	function openPopup() {
+		document.getElementById('item_popup').classList.add('active');
+		// console.log('Hello')
+	}
+
+	function closePopup() {
+		document.getElementById('item_popup').classList.remove('active');
+	}
+</script>

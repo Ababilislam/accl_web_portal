@@ -1,0 +1,228 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<style>
+	:root {
+            --bg_color: {{=session.bg_color}};
+            --layout_color: {{=session.layout_color}};
+            --button_color: {{=session.button_color}};
+            --button_text_color: {{=session.button_text_color}};
+            --heading_text: {{=session.heading_text}};
+            --text_color: {{=session.text_color}};
+        }
+	.back_btn {
+		height: 32px;
+		width: 75px;
+		margin: 10px 0;
+		padding: 5px 5px 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		background-color: var(--button_color);
+	}
+	.back_btn input {
+		border: 0;
+		cursor: pointer;
+		color: var(--button_text_color);
+		/* color: {{=session.button_text_color}}; */
+		background-color: var(--button_color);
+		/* background-color: {{=session.button_color}} */
+	}
+	.popup-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 500px;
+		width: 1100px;
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		background: var(--bg_color)
+		/* background: {{=session.bg_color}} */
+	}
+	.popup-content form {
+		height: 100%;
+		width: 100%;
+	}
+	.popup-content .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+	.top_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 10px 0 25px 0;
+	}
+	.top_row h4 {
+		font-weight: 300;
+		padding-top: 30px;
+		padding-left: 25px;
+		color: var(--button_color)
+		/* color: {{=session.button_color}} */
+	}
+	.top_row .fa-xmark {
+		color: var(--button_color)
+		/* color: {{=session.button_color}} */
+	}	
+	.input_row {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-evenly;
+	}
+	.input_row .item_add tr {
+		padding-bottom: 15px;
+	}
+	.input_row .item_add input {
+		width: 200px; 
+		margin-left: 10px;
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid var(--button_color)
+		/* border: 1px solid {{=session.button_color}} */
+	}
+
+	
+
+	.input_row .item_add .status_add #st_dropdown {
+		width: 200px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+	}
+	.submit_row {
+		margin-top: 25px;
+		font-size: 13px;
+		text-align: center;
+	}
+    .submit_row #update_btn {
+		height: 32px;
+		width: 110px;
+		padding: 5px 10px;
+		/* font-size: 13px; */
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		/* color: {{=session.button_text_color}}; */
+		background-color: var(--button_color);
+		/* background-color: {{=session.button_color}} */
+	}
+	.submit_row #update_btn:hover {
+		background-color: white;     		
+		box-shadow: 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5);
+		color: var(--text_color);
+		/* color: {{=session.text_color}} */
+	}
+    .submit_row #delete_btn {
+		height: 32px;
+		width: 110px;
+		margin-left: 5px;
+		padding: 5px 10px;
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+        background-color: rgba(255, 111, 111);
+		color: var(--button_text_color)
+		/* color: {{=session.button_text_color}} */
+	}
+	.submit_row #delete_btn:hover {
+		background-color: white;     		
+		box-shadow: 0 0 20px rgba(255, 111, 111, 0.5), 0 0 20px rgba(255, 111, 111, 0.5), 0 0 20px rgba(255, 111, 111, 0.5);
+		color: var(--text_color)
+	}
+</style>
+{{end}}
+
+<!-- Back button row -->
+<div class="back_btn">
+	<form action="{{=URL(c='supervisor',f='supervisor_create')}}" method="post">
+		<i class="fa-solid fa-arrow-left"></i>
+		<input name="prev_page_btn" type="submit" value="Back"/>
+	</form>
+</div>
+
+<!-- Popup Content -->
+<div class="popup-content">
+    <form name="form1" action="{{=URL(c = 'supervisor', f = 'supervisor_edit')}}" method="post">
+        <div class="top_row">
+            <h4>Edit/Delete Item</h4>
+        </div>
+        <div class="input_row" style="padding-top: 30px;">
+            <div class="col1" style="margin-right: 20px;">
+                <table>
+                    <tr class="item_add">
+                        
+                        <td class="input">
+							<label style="text-align: left; width: 65px;">Sup ID </label>
+                            <input type="text" id="sup_id" name="sup_id" value="{{=sup_id}}" disabled>
+							<input type="hidden" id="sup_id" name="sup_id" value="{{=sup_id}}">
+                        </td>
+                    </tr>	
+                    <tr class="item_add">
+                        <td class="input" style="padding-top: 15px;">
+							<label style="text-align: left; width: 65px;">Mobile </label>
+                            <input type="text" id="sup_mobile" name="sup_mobile" value="{{=sup_mobile}}" required>
+                        </td>
+                    </tr>			
+                </table>
+            </div>
+            <div class="col2" style="margin-right: 20px;">
+                <table>
+                    <tr class="item_add">
+                        <td class="input">
+							<label>Sup Name :</label>
+                            <input type="text" id="sup_name" name="sup_name" value="{{=sup_name}}" required>
+                        </td>
+                    </tr>			
+                    <tr class="item_add">
+                        <td class="input" style="padding-top: 15px;">
+							<label style="text-align: left; width: 90px;">Password </label>
+                            <input type="text" id="sup_password" name="sup_password" value="{{=sup_pass}}" required>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col3"style="margin-right: 20px;">
+                <table>			
+                    <tr class="item_add">
+    
+						<td class="status_add" style="width: 350px;">
+							<label style="text-align: left; width: 50px;">Type </label>
+                            <input type="text" id="sup_type1" name="sup_type1" value="{{=sup_type}}" disabled>
+                            <input type="hidden" id="sup_type" name="sup_type" value="{{=sup_type}}" required>
+                    
+						</td>
+
+
+                    </tr>
+                    <tr class="item_add">
+                        <td class="status_add" style="width: 150px;padding-top: 15px;">
+							<label style="text-align: left; width: 60px;">Status </label>
+                            <select id="st_dropdown" name="status">
+								{{if rep_status=="ACTIVE":}}
+                                <option selected value="active">ACTIVE</option>
+								<option value="inactive">INACTIVE</option>
+                                {{pass}}
+								{{if rep_status=="INACTIVE":}}
+								<option value="active">ACTIVE</option>
+								<option selected value="inactive">INACTIVE</option>
+								{{pass}}
+                            </select>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </div>
+        </div>
+        <div class="submit_row">
+            <input type="submit" name="update_btn" id="update_btn" value="Update"/>
+            <input type="submit" name="delete_btn" id="delete_btn" value="Delete"/>
+        </div>
+    </form>
+</div>

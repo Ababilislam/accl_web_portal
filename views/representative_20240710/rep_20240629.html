@@ -1,0 +1,241 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+<style>
+	.page_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding-top: 10px;
+	}
+	
+	.page_row td {
+		padding-right: 3px;
+	}
+
+	.page_row td input {
+		padding: 5px;
+		border: 1px solid rgb(179, 179, 179);
+		border-radius: 20px;
+		height: 30px;
+		width: 30px;
+		font-size: 13px;
+		font-weight: 300;
+	}
+
+	.top_row {
+        display: flex;
+        flex-direction: row;
+		justify-content: space-between;
+        padding: 10px 0 10px 0;
+    }
+
+    .top_row .rep_add input {
+		width: 150px; 
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+
+    .top_row .rep_add .status_add #st_dropdown {
+		width: 100px;
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+
+    .top_row .rep_add .add_btn input {
+		height: 32px;
+		width: 120px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+
+    .rep_table {
+		margin-top: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.rep_table .all_rep td {
+		padding: 10px;
+		text-align: center;
+		font-size: 14px;
+		border: 1px solid black;
+		background: {{=session.button_color}}
+	}
+	
+	.rep_table td {
+		font-size: 14px;
+		font-weight: 400;
+		padding: 5px;
+		align-items: center;
+	}
+
+	.rep_table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.rep_table .single_row td {
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row #next_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	}
+
+	/* .rep_table .single_row #div_name {
+		width: 300px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row #edit_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	} */
+</style>
+{{end}}
+
+<!-- page number  -->
+<div class="page_row">
+	<table>
+		<tr>
+			{{current_page = int(page)}}
+			{{start_index = max(1, current_page - 2)}}
+			{{last_index = start_index + 5}}
+			{{for no in range(start_index, last_index):}} 
+			<td>
+				<form  action="{{=URL(c='representative', f='rep')}}">
+					{{if current_page == no:}}
+					<input style="color: white; border: 1px solid black; background-color: {{=session.button_color}}" id="page_no" type="submit" style="margin-left: 10px;" name="page_no" value="{{=no}}">
+					{{else:}}
+					<input style="background-color: white;" id="page_no" type="submit" style="margin-left: 10px;" name="page_no" value="{{=no}}">
+					{{pass}}
+				</form>
+			</td>
+			{{pass}}
+		</tr>
+	</table>
+</div>
+
+<!-- input fields -->
+<div class="top_row">
+    <form action="{{=URL(c='representative', f='rep')}}" method="post" >
+        <table>
+            <tr class="rep_add">
+                <td class="id_add">
+                    <input type="text" id="rep_id_input" name="rep_id_input" placeholder="Rep ID">
+                </td>
+                <td class="name_add">
+                    <input type="text" id="rep_name_input" name="rep_name_input" placeholder="Name">
+                </td>
+				<td class="type_add">
+                    <input type="text" id="rep_type_input" name="rep_type_input" placeholder="Type">
+                </td>
+				<td class="mobile_add">
+                    <input type="text" id="rep_mobile_input" name="rep_mobile_input" placeholder="Mobile">
+                </td>
+				<td class="password_add">
+                    <input type="text" id="rep_password_input" name="rep_password_input" placeholder="Password">
+                </td>
+				<td class="status_add">
+					<select id="st_dropdown" name="status">
+						<option value="active">ACTIVE</option>
+						<option value="inactive">INACTIVE</option>
+					  </select>
+                </td>
+                <td class="add_btn">
+                    <input type="submit" name="add_btn" value="Add New Rep" onsubmit="loadContent(`{{=URL(c='representative', f='rep')}}`)">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <!-- <div class="search">
+		<form action="">
+			<table class="search_level">
+				<tr>
+					<td>
+						<input type="text" id="levelInput" name="levelInput" placeholder="Enter Level ID/Name">
+					</td>
+					<td>
+						<button type="button" onclick="search()" name="search_btn">
+							<i class="fa-solid fa-magnifying-glass"></i>
+						</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+    </div> -->
+</div>
+
+<!-- rep display table  -->
+<table class="rep_table">
+	<form name="form1" method="post">
+		<tr class="all_rep">
+			<td width="110px">Rep ID</td>
+			<td width="200px">Name</td>
+            <td width="70px">Type</td>
+            <td width="100px">Password</td>
+            <td width="70px">Status</td>
+            <td width="100px">Mobile</td>
+            <td width="40px"></td>
+		</tr>
+	</form>
+
+	{{for i in range(len(rep_records)):
+		index = i 
+		rep = rep_records[i]
+		rep_id = str(rep["rep_id"])
+		rep_name = str(rep["name"])
+        type = str(rep["user_type"])
+        password = str(rep["password"])
+        status = str(rep["status"])
+        mobile = str(rep["mobile_no"])
+	}}
+ 
+	<tr class="single_row">
+		<td>{{=rep_id}}</td>
+        <td>{{=rep_name}}</td>
+        <td>{{=type}}</td>
+        <td>{{=password}}</td>
+        <td>{{=status}}</td>
+        <td>{{=mobile}}</td>
+        <td class="next_btn">
+			<input type="submit" name="next_btn" id="next_btn" value=">>" onclick="loadContent(`{{=URL(c='representative', f='rep_edit')}}`)">
+		</td>
+	</tr>
+	{{pass}}
+</table>
+
+{{=response.flash}}
+
+<script>
+	// onclick="loadContent(`{{=URL(c='representative', f='rep')}}`)"
+    // url 
+    function loadContent(url) {
+        const content = document.getElementById('content');
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                content.innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching content:', error));
+    }
+</script>

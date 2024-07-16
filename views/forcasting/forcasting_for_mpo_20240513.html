@@ -1,0 +1,66 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<style>
+    .top-row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		width: 100%;
+		justify-content: flex-start;
+		padding-top: 10px;
+	}
+
+	.top-row label {
+		padding-top: 6px;
+		text-align: center;
+		margin-right: 20px;
+	}
+
+	.top-row input {
+		height: 32px;
+		width: 110px;
+		padding: 5px 10px;
+		margin-right: 5px;
+		font-size: 13px;
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+</style>
+{{end}}
+
+
+<!-- top btn row  -->
+<table class="top-row">
+    <tr>
+        <td><label for="csvFile">Forecasting data:</label></td>
+        <form id="form2" name="form2" method="POST" action="{{=URL(c='forcasting',f='forcasting_view')}}">
+            <td><input type="submit" value="View"></td>
+        </form>
+        <!-- <form id="form2" name="form2" method="POST" action="{{#=URL(c='forcasting',f='forcasting_csv_for_mpo')}}">
+            <input type="file" id="csvFile" name="csvFile" accept=".csv">
+            <td><input type="submit" value="Download"></td>
+        </form> -->
+    </tr>
+</table>
+
+
+<br>
+<br>
+<br>
+
+
+<!-- file row  -->
+<!-- <table class="upload-row">
+    <tr>
+        <td>
+            <form id="form3" name="form3" method="POST" action="{{#=URL(c='forcasting',f='forcasting_csv_upload_for_mpo')}}" enctype="multipart/form-data">
+                <input type="file" name="csvFile">
+                <input type="submit" value="Upload CSV">
+            </form>
+        </td>
+    </tr>
+</table> -->

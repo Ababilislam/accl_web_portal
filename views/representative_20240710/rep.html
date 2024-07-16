@@ -1,0 +1,668 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+
+<style>
+	:root {
+		--bg_color: {{=session.bg_color}};
+		--layout_color: {{=session.layout_color}};
+		--button_color: {{=session.button_color}};
+		--button_text_color: {{=session.button_text_color}};
+		--heading_text: {{=session.heading_text}};
+		--text_color: {{=session.text_color}};
+	}
+	.page_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding-top: 10px;
+	}
+
+	.page_row td {
+		padding-right: 3px;
+	}
+
+	.page_row td input {
+		padding: 5px;
+		border: 1px solid rgb(179, 179, 179);
+		border-radius: 20px;
+		height: 30px;
+		width: 30px;
+		font-size: 13px;
+		font-weight: 300;
+	}
+
+	.top_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 10px 0 10px 0;
+	}
+
+	.search_type_style {
+		width: 80px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		color: var(--button_text_color);
+		/* background-color: var(--button_color) */
+		/* border: 1px solid var(--button_color) */
+	}
+
+	.top_row .rep_add input {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color)
+	}
+
+	.top_row .rep_add .status_add #search_type {
+		width: 100px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+
+		border: 1px solid var(--button_color)
+	}
+	.top_row .rep_add .status_add #st_dropdown {
+		width: 100px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color)
+	}
+
+	.top_row .rep_add .add_btn input {
+		height: 32px;
+		width: 120px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+		border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		background-color: var(--button_color)
+	}
+
+	.rep_table {
+		width: 100%;
+		margin-top: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .all_rep td {
+		padding: 10px;
+		text-align: center;
+		font-size: 14px;
+		border: 1px solid black;
+		background: var(--button_color)
+	
+	}
+
+	.rep_table td {
+		font-size: 14px;
+		font-weight: 400;
+		padding: 5px;
+		align-items: center;
+	}
+
+	.rep_table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row td {
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row #next_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+
+		color: var(--button_color)
+		/* color: {{=session.button_color}} */
+	}
+
+	/* .rep_table .single_row #div_name {
+		width: 300px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.rep_table .single_row #edit_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	} */
+
+	input[type=text], input[type=password]{
+		margin: 2px 0px 2px 0px;
+	}
+
+	div.error {
+		width: auto;
+	}
+
+	#sm_rep_rep_id{
+		width: 80px;
+	}
+
+	#sm_rep_name{
+		width: 250px;
+	}
+
+	#sm_rep_status{
+		width: 120px;
+	}
+
+	#sm_rep_mobile_no{
+		width: 120px;
+	}
+
+	.page_color,body{
+		font-family:Arial, Helvetica, sans-serif;
+		font-size:13px;	
+	}
+
+	.popup-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 300px;
+		width: 700px;
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		background: var(--bg_color);
+	}
+	.popup-content form {
+		height: 100%;
+		width: 100%;
+	}
+
+	#item_popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+		background: rgb(231, 231, 231, 0.8);
+	}
+	#item_popup.active {
+		display: flex;
+	}
+	#item_popup .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+
+	.pop_up_input {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		gap: 20px; /* Adds space between columns */
+		padding: 10px 0;
+		padding-top: 10px;
+	}
+
+	.pop_up_input .col1,
+	.pop_up_input .col2,
+	.pop_up_input .col3 {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	}
+
+	.pop_up_input .rep_add input {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+	}
+
+	.pop_up_input .rep_add .status_add #st_dropdown {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 20px;
+		border: 1px solid var(--button_color);
+	}
+
+	.pop_up_input .rep_add .add_btn input {
+		height: 32px;
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 0;
+		border-radius: 20px;
+		cursor: pointer;
+		color: var(--button_text_color);
+		background-color: var(--button_color);
+	}
+	#flashMessage {
+		font-size: 12px;
+        font-weight: 400;
+        margin-top: 5px;
+	}
+
+	.circle-button {
+		border-radius: 50%;
+		border: 1px solid black;
+		width: 30px; 
+		height: 30px; 
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding-left: 10px; 
+		background-color: var(--bg_color);
+		color: var(--button_color);
+		transition: background-color 0.3s, transform 0.3s; 
+	}
+
+	.circle-button.active {
+		font-weight: bold important;
+		background-color: var(--button_color);
+		color: var(--bg_color);
+		transform: scale(1.2); 
+	}
+
+	.circle-button:hover {
+		background-color: var(--button_color);
+		color: white;
+		transform: scale(1.1); 
+	}
+</style>
+
+{{end}}
+
+<!-- pagination  -->
+<!-- page number  -->
+<div class="page_row">
+	<table>
+		<tr class="rep_add">
+			{{current_page = int(page)}}
+			{{first_page = 0}}
+			{{last_page = (total//items_per_page)}}
+			{{previous_last = last_page-1}}
+			{{imidate_previous = current_page-1}}
+			{{next_page = current_page+1}}
+			{{start_count = max(1, current_page - 1)}}
+			{{next_count = start_count + 1}}
+			{{for no in range(start_count, next_count):}}
+
+				{{if current_page == 0:}}
+					
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button ml-2" hidden> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button ml-2" hidden>{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					{{ if total > items_per_page:}}
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button ml-2">{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button ml-2">{{=last_page}}</a>
+					{{pass}}
+				{{elif current_page == 1:}}
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button ml-2" hidden> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button ml-2">{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button ml-2">{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button ml-2">{{=last_page}}</a>
+				{{elif (current_page > 1) and (current_page < previous_last):}}
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button  ml-2"> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button  ml-2">{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button  ml-2">{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button  ml-2">{{=last_page}}</a>
+				{{elif current_page == previous_last:}}
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button  ml-2"> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button  ml-2">{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button  ml-2">{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button  ml-2" hidden>{{=last_page}}</a>
+				{{elif current_page == last_page:}}
+					<a href="{{=URL(args=[first_page])}}" class="btn circle-button  ml-2"> {{=first_page}} </a>
+					<a href="{{=URL(args=[current_page-1])}}" class="btn circle-button  ml-2">{{=imidate_previous}}</a>
+					<a href="#" class="btn circle-button active ml-2">{{=current_page}}</a>
+					<a href="{{=URL(args=[current_page+1])}}" class="btn circle-button  ml-2" hidden>{{=next_page}}</a>
+					<a href="{{=URL(args=[last_page])}}" class="btn circle-button  ml-2" hidden>{{=last_page}}</a>
+				{{pass}}
+				
+			{{pass}}
+
+		</tr>
+	</table>
+</div>
+
+<!-- Representative Filter Section -->
+<!-- <table width="900" border="1" class="sample_border"> -->
+<div class="top_row">
+
+<table width="100%">
+	<form id="form1" name="form1" method="POST" action="{{=URL(c='representative',f='rep')}}">
+		<tr align="left" class="rep_add">
+			<td width="100" height="28" class="status_add">
+				<select name="search_type" id="search_type" style="width:150px">
+					{{if session.search_type=='' or session.search_type==None:}}
+					<option selected="selected">Select a Type</option>
+					{{pass}}
+					{{if session.search_type=='RepID':}}
+					<option value="RepID" selected="selected">Rep ID/Name/Mobile</option>
+					{{else:}}<option value="RepID">Rep ID/Name/Mobile</option>
+					{{pass}}
+
+					{{if session.search_type=='Status':}}
+					<option value="Status" selected="selected">Status</option>
+					{{else:}}<option value="Status">Status</option>
+					{{pass}}
+
+				</select>
+
+			</td>
+			<td width="120" class="id_add">
+				{{if session.search_value=='' or session.search_value==None:}}
+				<input name="search_value" type="text" id="search_value" size="25" value="" placeholder="Select a value"
+					autocomplete="off" style="width:200px" />
+				{{else:}}
+				<input name="search_value" type="text" id="search_value" size="25" value="{{=session.search_value}}"
+					placeholder="Select a value" autocomplete="off" style="width:200px" />
+				{{pass}}
+			</td>
+
+			<td align="left"><input type="submit" name="btn_filter" id="btn_filter" value="Filter" class="button_update" style="width: 100px; background-color: var(--button_color); color: var(--button_text_color);" />
+				&nbsp;
+				<input type="submit" name="btn_rep_all" id="btn_rep_all" value="All" class="button_update" style="width: 100px; background-color: var(--button_color); color: var(--button_text_color);" />
+				&nbsp;&nbsp;
+			</td>
+
+		</tr>
+	</form>
+</table>
+</div>
+
+
+
+<!-- input fields -->
+<div>
+	<table>
+		<tr style="height: 30px;">
+			<td style="width: 90%;">
+				<strong>Total:</strong> {{=total}}<br />
+			</td>
+			<td  align="right">
+				<button id="btn_pop_up" class="button_update" style="width: 100px; height: 30px; border-radius: 30px; border: none; outline: none; background-color: var(--button_color); color: var(--button_text_color);" onclick="openPopup()">Add Rep<i class="fa-solid fa-plus" style="padding-left: 6px;"></i></button>
+			</td>
+			<td align="right">
+				<a href="{{=URL(c='representative',f='download_representative')}}">
+					<input type="button" name="Input2" id="Input2" value="Download" class="button_update" style="width: 100px; height: 30px; border-radius: 30px; border: none; outline: none; background-color: var(--button_color); color: var(--button_text_color); margin-left: 2px;" />
+				</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
+<!-- rep display table  -->
+<table class="rep_table">
+	<form name="form1" method="post">
+		<tr class="all_rep">
+			<td width="110px">Rep ID</td>
+			<td width="200px">Name</td>
+			<!-- <td width="70px">Type</td> -->
+			<td width="100px">Password</td>
+			<td width="70px">Status</td>
+			<td width="100px">Mobile</td>
+			<td width="40px"></td>
+		</tr>
+	</form>
+
+	{{for i in range(len(rep_records)):
+	index = i
+	rep = rep_records[i]
+	rep_id = str(rep["rep_id"])
+	rep_name = str(rep["name"])
+	type = str(rep["user_type"])
+	password = str(rep["password"])
+	status = str(rep["status"])
+	mobile = str(rep["mobile_no"])
+	}}
+
+	<tr class="single_row">
+		<td>{{=rep_id}}</td>
+		<td>{{=rep_name}}</td>
+		<!-- <td>{{#=type}}</td> -->
+		<td>{{=password}}</td>
+		<td>{{=status}}</td>
+		<td>{{=mobile}}</td>
+		<td class="next_btn">
+			<a href="{{=URL(c='representative',f='rep_edit',args=[rep_id])}}"> >>
+			</a>
+		</td>
+	</tr>
+	{{pass}}
+</table>
+
+
+
+<!-- Popup Section -->
+<div class="popup-container" id="item_popup">
+	<div class="popup-content">
+		<form name="form1" action="{{=URL(c='representative',f='rep')}}" method="post">
+			<div class="top_row" style="display: flex; justify-content: space-between; align-items: center;">
+				<h4 style="margin: auto; padding-left: 150px; color: var(--button_color);" >Add Rep</h4>
+				<button onclick="closePopup()" style="margin-left: auto;"><i class="fa-solid fa-xmark" style="color: red;"></i></button>
+			</div>
+			<div class="pop_up_input">
+				<div class="col1">
+					<table>
+						<tr class="rep_add">
+							<td class="id_add">
+								<input type="text" id="rep_id" name="rep_id" placeholder="Rep ID" required>
+							</td>
+						</tr>	
+						<tr class="rep_add">
+							<td class="id_add">
+								<input type="text" id="rep_mobile" name="rep_mobile" placeholder="Mobile" required>
+							</td>
+						</tr>			
+					</table>
+				</div>
+				<div class="col2">
+					<table>
+						<tr class="rep_add">
+							<td class="id_add">
+								<input type="text" id="rep_name" name="rep_name" placeholder="Rep Name" required>
+							</td>
+						</tr>			
+						<tr class="rep_add">
+							<td class="id_add">
+								<input type="text" id="rep_password" name="rep_password" placeholder="Password" required>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="col3" style="margin-top: 35px;">
+					<table>			
+						<tr class="rep_add">
+							<td class="id_add">
+								<input type="text" id="rep_type" name="rep_type" placeholder="Type" required>
+							</td>
+						</tr>
+						<tr class="rep_add">
+							<td class="status_add" style="width: 150px;">
+								<select id="st_dropdown" name="status" required>
+									<option value="active">ACTIVE</option>
+									<option value="inactive">INACTIVE</option>
+								</select>
+							</td>
+						</tr>
+						<tr class="rep_add">
+							<td class="add_btn" style="text-align: right; padding-top: 5px;">
+								<input type="submit" name="submit_btn" id="submit_btn" value="Submit"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+		
+			</div>
+		</form>
+	</div>
+</div>
+
+{{=response.flash}}
+
+
+{{block script}}
+
+<script>
+
+	var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+
+	// onclick="loadContent(`{{=URL(c='representative', f='rep')}}`)"
+	// url 
+	function loadContent(url) {
+		const content = document.getElementById('content');
+		fetch(url)
+			.then(response => response.text())
+			.then(html => {
+				content.innerHTML = html;
+			})
+			.catch(error => console.error('Error fetching content:', error));
+	}
+	
+
+	
+	$(document).ready(function(){
+
+		var valueListStr="";
+
+		$('#search_type').blur(function(){
+			
+			if ($('#search_type').val()=='RepID'){
+				//alert(base_url+'default/get_route_list');
+				$.ajax({
+					url: base_url+'representative/get_rep_list',
+					data: {
+						'search_type': $('#search_type').val()
+					},
+					success: function(resStr) {
+							valueListStr=resStr
+							console.log('valueListStr: ', valueListStr)
+						},
+					error: function(error){
+						console.log(error)
+					}
+				},);
+				
+			}
+			
+			else if ($('#search_type').val()=='Status')
+			{
+				valueListStr='ACTIVE,INACTIVE'
+			}
+		});
+
+		$('#search_value').keyup(function(){
+			var valueList = valueListStr.split(',');				
+			var searchValue=$("#search_value").val();
+
+			//---------------- auto complete combo list
+
+			var valueList_new=new Array();
+
+			lc=0;
+			i =0;
+			var valueStr="";				
+
+			while (i < valueList.length)
+			{
+				valueStr=valueList[i];
+				i=i+1;					
+				var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+
+				if (res!=null){
+
+					valueList_new[lc]=valueStr;
+
+					lc=lc+1;
+
+					if (lc==30){
+						break;
+					};
+
+				}				
+
+			};
+
+			//-------------- auto complete source
+
+			$( "input#search_value" ).autocomplete({
+				source: valueList_new
+			});
+		}); 
+	})
+
+	$(function () {
+        $.ajax({
+            url: base_url + 'representative/get_rep_id_name_list',
+            success: function (resStr) {
+                valueListStr_sm = resStr
+            }
+        });
+    
+        $('#rep_id_name_input').keyup(function () {
+            //-------------------------
+            var valueList = valueListStr_sm.split(',');
+            var searchValue = $("#rep_id_name_input").val();
+
+            //---------------- auto complete combo list
+            var valueList_new = new Array();
+            lc = 0;
+            i = 0;
+            var valueStr = "";
+            while (i < valueList.length) {
+                valueStr = valueList[i];
+                i = i + 1;
+                var res = valueStr.toUpperCase().match(searchValue.toUpperCase());
+                if (res != null) {
+                    valueList_new[lc] = valueStr;
+                    lc = lc + 1;
+                    if (lc == 30) {
+                        break;
+                    };
+                } else {
+                    continue;
+                }
+            };
+            //alert (ref_list_new);
+
+            //-------------- auto complete source
+            $("input#rep_id_name_input").autocomplete({
+                source: valueList_new
+            });
+
+        });
+    });
+
+	
+
+	function openPopup() {
+		document.getElementById('item_popup').classList.add('active');
+		// console.log('Hello')
+	}
+
+	function closePopup() {
+		document.getElementById('item_popup').classList.remove('active');
+	}
+
+
+</script>
+
+{{end}}

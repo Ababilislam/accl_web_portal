@@ -1,0 +1,255 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<style>
+    .back_btn {
+		height: 32px;
+		width: 75px;
+		margin: 10px 0;
+		padding: 5px 5px 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	.back_btn input {
+		border: 0;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	.popup-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 500px;
+		width: 1100px;
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		background: {{=session.bg_color}}
+	}
+	.popup-content form {
+		height: 100%;
+		width: 100%;
+	}
+	.popup-content .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+	.top_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 10px 0 25px 0;
+	}
+	.top_row h4 {
+		font-weight: 300;
+		color: {{=session.button_color}}
+	}
+	.top_row .fa-xmark {
+		color: {{=session.button_color}}
+	}	
+	.input_row {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+	.input_row .item_add tr td {
+		padding-bottom: 15px;
+	}
+	.input_row .item_add input {
+		width: 200px; 
+		margin-left: 10px;
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+	.input_row #status_input {
+		width: 200px; 
+		margin-left: 10px;
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+	.submit_row {
+		margin-top: 25px;
+		font-size: 13px;
+		text-align: center;
+	}
+    .submit_row #update_btn {
+		height: 32px;
+		width: 110px;
+		padding: 5px 10px;
+		/* font-size: 13px; */
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	.submit_row #update_btn:hover {
+		background-color: white;     		
+		box-shadow: 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5);
+		color: {{=session.text_color}}
+	}
+    .submit_row #delete_btn {
+		height: 32px;
+		width: 110px;
+		margin-left: 5px;
+		padding: 5px 10px;
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+        background-color: rgba(255, 111, 111);
+		color: {{=session.button_text_color}}
+	}
+	.submit_row #delete_btn:hover {
+		background-color: white;     		
+		box-shadow: 0 0 20px rgba(255, 111, 111, 0.5), 0 0 20px rgba(255, 111, 111, 0.5), 0 0 20px rgba(255, 111, 111, 0.5);
+		color: {{=session.text_color}}
+	}
+	.status {
+		height: 32px;
+		width: 200px;
+		margin-left: 10px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 1px solid var(--button_color);
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.text_color}};
+		background-color: var(--button_text_color)
+	}
+</style>
+{{end}}
+
+<!-- Back button row -->
+<div class="back_btn">
+	<form action="{{=URL(c='item',f='item_screen')}}" method="post">
+		<i class="fa-solid fa-arrow-left"></i>
+		<input name="prev_page_btn" type="submit" value="Back"/>
+	</form>
+</div>
+
+<!-- Popup Content -->
+<div class="popup-content">
+    <form name="form1" action="{{=URL(c = 'item', f = 'item_edit', args = [item_id])}}" method="post">
+        <div class="top_row">
+            <h4>Edit/Delete Item</h4>
+        </div>
+        <div class="input_row">
+            <div class="col1">
+                <table class="item_add">
+                    <tr>
+                        <td><label for="item_id_input">Item Code</label></td>
+                        <td><input type="text" id="item_id_input" name="item_id_input" value="{{=item_id}}"></td>
+                    </tr>
+                    <!-- <tr>
+                        <td><label for="item_name_input">Name</label></td>
+                        <td><input type="text" id="item_name_input" name="item_name_input" value="{{#=name}}"></td>
+                    </tr> -->
+					<!-- remove -->
+                    <!-- <tr>
+                        <td><label for="pack_size_input">Pack Size</label></td>
+                        <td><input type="text" id="pack_size_input" name="pack_size_input" value="{{#=pack_size}}"></td>
+                    </tr> -->
+                    <tr>
+                        <td><label for="desc_input">Item Description</label></td>
+                        <td><input type="text" id="desc_input" name="desc_input" value="{{=des}}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="cat_id_input">Product Category</label></td>
+                        <td> <input type="text" id="cat_id_input" name="cat_id_input" value="{{=category_id}}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="cat_id_sp_input">Product Class</label></td>
+                        <td><input type="text" id="cat_id_sp_input" name="cat_id_sp_input" value="{{=category_id_sp}}"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col2">
+                <table class="item_add">
+                    <tr>
+                        <td><label for="unit_type_input">Product Type</label></td>
+                        <td><input type="text" id="unit_type_input" name="unit_type_input" value="{{=unit_type}}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="manufacturer_input">Brand</label></td>
+                        <td><input type="text" id="manufacturer_input" name="manufacturer_input" value="{{=manufacturer}}"></td>
+                    </tr>
+                    <!-- <tr>
+                        <td><label for="item_carton_input">Item Carton</label></td>
+                        <td><input type="text" id="item_carton_input" name="item_carton_input" value="{{#=item_carton}}"></td>
+                    </tr> -->
+                    <tr>
+                        <td><label for="price_input">Price</label></td>
+                        <td><input type="text" id="price_input" name="price_input" value="{{=price}}"></td>
+                    </tr>
+					<tr>
+                        <td><label for="conv_factor_input">Conv. Factor</label></td>
+                        <td><input type="text" id="conv_factor_input" name="conv_factor_input" value="{{=conv_factor}}"></td>
+                    </tr>
+                    <!-- <tr>
+                        <td><label for="dis_price_input">Discount Price</label></td>
+                        <td><input type="text" id="dis_price_input" name="dis_price_input" value="{{#=dist_price}}"></td>
+                    </tr> -->
+                    <!-- <tr>
+                        <td> <label for="vat_amt_input">VAT Amount</label></td>
+                        <td><input type="text" id="vat_amt_input" name="vat_amt_input" value="{{#=vat_amt}}"></td>
+                    </tr> -->
+                </table>
+            </div>
+            <div class="col3">
+                <table class="item_add">
+                    <!-- <tr>
+                        <td><label for="total_amt_input">Total Amount</label></td>
+                        <td><input type="text" id="total_amt_input" name="total_amt_input" value="{{#=total_amt}}"></td>
+                    </tr> -->
+                    <tr>
+                        <td><label for="status_input">Status</label></td>
+
+
+						
+							<td class="status_add">
+								<select id="status_input" name="status_input" class="status">
+									{{if status =="ACTIVE":}}
+									<option value="" disabled>Status</option>
+									<option value="ACTIVE" selected>ACTIVE</option>
+									<option value="INACTIVE">INACTIVE</option>
+									{{pass}}
+									{{if status =="INACTIVE":}}
+									<option value="" disabled>Status</option>
+									<option value="ACTIVE">ACTIVE</option>
+									<option value="INACTIVE" selected>INACTIVE</option>
+									{{pass}}
+
+								</select>
+							</td>
+
+
+                        <!-- <td><input type="text" id="status_input" name="status_input" value="{{#=status}}"></td> -->
+                    </tr>
+                    <tr>
+                        <td><label for="field1_input">Tax</label></td>
+                        <td><input type="text" id="field1_input" name="field1_input" value="{{=field1}}"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><label for="note_input">Origin</label></td>
+                        <td><input type="text" id="note_input" name="note_input" value="{{=note}}"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="submit_row">
+            <input type="submit" name="update_btn" id="update_btn" value="Update"/>
+            <input type="submit" name="delete_btn" id="delete_btn" value="Delete"/>
+        </div>
+    </form>
+</div>

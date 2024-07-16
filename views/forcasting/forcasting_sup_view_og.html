@@ -1,0 +1,981 @@
+{{block head}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+<title>{{=response.title}}</title>
+
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;400;600;700&display=swap');
+         
+	* {
+		font-family: 'Poppins', sans-serif;
+	}
+
+	.back-btn-row form {
+		height: 20px;
+		width: 60px;
+		margin-bottom: 10px;
+		padding: 5px 5px 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+
+	.back-btn-row input {
+		border: 0;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+
+	.forecast-table {
+		border: 1px solid black;
+		border-collapse: collapse;
+		overflow: auto;
+	}
+
+	/* .forecast-table th {	
+		padding: 5px;
+		height: 40px;
+		font-weight: 500;
+		font-size: 13px;
+		text-align: right;
+		border: 1px solid black;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	} */
+
+	/* .forecast-table td {
+		height: 30px;
+		font-size: 12px;
+		text-align: right;
+		padding-right: 5px;
+		border: 1px solid rgb(194, 194, 194);
+	} */
+
+	.forecast-table th:nth-child(1),
+    .forecast-table th:nth-child(2) {
+        padding: 5px;
+		height: 40px;
+		font-weight: 500;
+		font-size: 13px;
+		text-align: right;
+		border: 1px solid black;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+        
+    }
+    .forecast-table td:nth-child(1),
+    .forecast-table td:nth-child(2) {
+        height: 30px;
+		font-size: 12px;
+		text-align: right;
+		padding-right: 5px;
+		border: 1px solid rgb(194, 194, 194);
+        /* background-color: rgba(255, 255, 255, 1); Change the color as needed */
+    }
+
+    .forecast-table tr:nth-child(odd) td:nth-child(1),
+    .forecast-table tr:nth-child(odd) td:nth-child(2) {
+        background-color: {{=session.bg_color}}
+    }
+
+    .forecast-table tr:nth-child(even) td:nth-child(1),
+    .forecast-table tr:nth-child(even) td:nth-child(2) {
+        background-color: #eefaec;
+    }
+
+    .forecast-table th:nth-child(n+3) {
+        padding: 5px;
+		height: 40px;
+		font-weight: 500;
+		font-size: 13px;
+		text-align: right;
+		border: 1px solid black;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+    }
+    .forecast-table td:nth-child(n+3) {
+        height: 30px;
+		font-size: 12px;
+		text-align: right;
+		padding-right: 5px;
+		border: 1px solid rgb(194, 194, 194);
+    }
+
+	.forecast-table tr:nth-child(even) {
+		background-color: #eefaec;
+	}
+
+	input[type=text] {
+		height: 20px;
+		width: 95px;
+		border: 1px solid rgb(204, 204, 204);
+		border-radius: 2px;
+		background-color: transparent;
+        text-align: right;
+	}
+
+	input[type=text]::placeholder {
+		color: black;
+	}
+
+	.submit-btn-row {
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+	.submit-btn-row form {
+	/* input[type=submit] { */
+		height: 20px;
+		width: 60px;
+		margin-bottom: 10px;
+		padding: 5px 5px 5px 10px;
+		font-size: 13px;
+		border: 1px solid {{=session.text_color}};
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+
+	.submit-btn-row input {
+		border: 0;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+
+	#flashMessage {
+		font-size: 12px;
+        font-weight: 400;
+        margin-top: 5px;
+	}
+</style>
+
+<script>
+	// function checkValue(inputField) {
+	// 	if (inputField.value === '') {
+	// 		inputField.value = '0'; // Set value to 0 if empty
+	// 	}
+	// }
+
+	document.addEventListener("DOMContentLoaded", function() {
+		var flashMessage = document.getElementById("flashMessage");
+
+		if (flashMessage) {
+			flashMessage.style.display = "inline";
+			
+			setTimeout(function() {
+				flashMessage.style.display = "none";
+			}, 3000); // 3000 milliseconds = 3 seconds
+		}
+	});
+
+	// TO CHECK FOR TYPE OF INPUT
+	document.getElementById('qty_input').addEventListener('input', function (e) {
+		const value = this.value;
+		
+		// RegEx => only numbers and 1 optional decimal point, and 2 d.p.
+		const regex = /^\d+(\.\d{0,2})?$/;
+
+		// If the value does not match the regex, remove the last character
+		if (!regex.test(value)) {
+			this.value = value.slice(0, -1);
+		}
+	});
+</script>
+{{end}}
+
+<!-- Back btn row  -->
+<table class="back-btn-row">
+    <tr>
+        <td>
+			{{if session.user_type == 'sup':}}
+				<form action="{{=URL(c='forcasting',f='forcasting_for_sup')}}" method="post">
+					<i class="fa-solid fa-arrow-left"></i>
+					<input name="prev_page_btn" type="submit" value="Back"/>
+				</form>
+			{{elif session.user_type == 'rep':}}
+				<form action="{{=URL(c='forcasting',f='forcasting_for_mpo')}}" method="post">
+					<i class="fa-solid fa-arrow-left"></i>
+					<input name="prev_page_btn" type="submit" value="Back"/>
+				</form>
+			{{pass}}
+        </td>
+    </tr>
+</table>
+
+<!-- Forecast Table -->
+{{if length == 0:}}
+	<table class="forecast-table" style="width: 2800px;">
+		<form name="form1" action="{{=URL(c='forcasting',f='forcasting_sup_edit')}}" method="post">
+			<tr class="all_forecast">
+				<th style="position: sticky; left: 0; z-index: 1; width: 80px; text-align: left;">Item Code</th>
+				<th style="position: sticky; left: 80px; z-index: 1; width: 220px; text-align: left;">Item Name</th>
+				<th style="width: 70px; text-align: left;">UoM</th>
+				{{for month in months:}}
+					<th style="width: 100px;">{{=month}}</th>
+				{{pass}}
+			</tr>
+			{{for i in range(len(item_rec)):
+				item = item_rec[i]
+				item_code = str(item["item_id"])
+				item_name = str(item["name"])
+				UoM = str(item["unit_type"])}}
+				<tr class="single_row">
+					<td style="position: sticky; left: 0; z-index: 1; text-align: left; padding-left: 5px;">{{=item_code}}</td>
+					<td style="position: sticky; left: 80px; z-index: 1; text-align: left; padding-left: 5px;">{{=item_name}}</td>
+					<td style="text-align: left; padding-left: 5px;">{{=UoM}}</td>
+					{{if status != 'POSTED' or status != 'APPROVED':}}
+						<td><input type="text" id="qty_input" name="input1" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input2" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input3" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input4" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input5" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input6" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input7" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input8" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input9" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input10" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input11" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input12" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input13" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input14" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input15" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input16" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input17" pattern="^\d+(\.\d{1,2})?$"></td>
+						<td><input type="text" id="qty_input" name="input18" pattern="^\d+(\.\d{1,2})?$"></td>
+					{{else:}}
+						<td>{{=month1}}</td>
+						<td>{{=month2}}</td>
+						<td>{{=month3}}</td>
+						<td>{{=month4}}</td>
+						<td>{{=month5}}</td>
+						<td>{{=month6}}</td>
+						<td>{{=month7}}</td>
+						<td>{{=month8}}</td>
+						<td>{{=month9}}</td>
+						<td>{{=month10}}</td>
+						<td>{{=month11}}</td>
+						<td>{{=month12}}</td>
+						<td>{{=month13}}</td>
+						<td>{{=month14}}</td>
+						<td>{{=month15}}</td>
+						<td>{{=month16}}</td>
+						<td>{{=month17}}</td>
+						<td>{{=month18}}</td>
+					{{pass}}
+					<input type="hidden" name="item_code" value="{{=item_code}}">
+				</tr>
+			{{pass}}
+
+			{{if status != 'POSTED' or status != 'APPROVED':}}
+				<input name="submit_btn_new" type="submit" value="Update" style="height: 30px; width: 80px; margin: 0px 10px 10px 0px; padding: 5px 5px 5px 10px; font-size: 13px; border: 1px solid {{=session.text_color}}; border-radius: 20px; cursor: pointer; color: {{=session.button_text_color}}; background-color: {{=session.button_color}}"/>
+				<input name="post_btn" type="submit" value="Post" style="height: 30px; width: 80px; margin: 0px 10px 10px 0px; padding: 5px 5px 5px 10px; font-size: 13px; border: 1px solid {{=session.text_color}}; border-radius: 20px; cursor: pointer; color: {{=session.button_text_color}}; background-color: {{=session.button_color}}"/>
+			{{else:}}
+				<input name="submit_btn_new" type="submit" value="Update" style="height: 30px; width: 80px; margin: 0px 10px 10px 0px; padding: 5px 5px 5px 10px; font-size: 13px; border: 1px solid #949494; border-radius: 20px; cursor: pointer; color: #949494; background-color: #d6d6d6" disabled/>
+				<input name="post_btn" type="submit" value="Post" style="height: 30px; width: 80px; margin: 0px 10px 10px 0px; padding: 5px 5px 5px 10px; font-size: 13px; border: 1px solid #949494; border-radius: 20px; cursor: pointer; color: #949494; background-color: #d6d6d6" disabled/>
+			{{pass}}
+		</form>
+	</table>
+{{else:}}
+	<table class="forecast-table" style="width: 2800px;">
+		<form name="form1" action="{{=URL(c='forcasting',f='forcasting_sup_edit')}}" method="post">
+			<!-- month row  -->
+			<tr class="all_forecast">
+				<th style="position: sticky; left: 0; z-index: 1; width: 80px; text-align: left;">Item Code</th>
+				<th style="position: sticky; left: 80px; z-index: 1; width: 220px; text-align: left;">Item Name</th>
+				<th style="width: 70px; text-align: left;">UoM</th>
+				{{for i in range(len(forecast_records)):
+					forecast = forecast_records[i]
+					item_code = str(forecast["item_code"])
+					item_name = str(forecast["item_name"])
+					UoM = str(forecast["UoM"])
+					month1 = str(forecast["month1"])
+					month2 = str(forecast["month2"])
+					month3 = str(forecast["month3"])
+					month4 = str(forecast["month4"])
+					month5 = str(forecast["month5"])
+					month6 = str(forecast["month6"])
+					month7 = str(forecast["month7"])
+					month8 = str(forecast["month8"])
+					month9 = str(forecast["month9"])
+					month10 = str(forecast["month10"])
+					month11 = str(forecast["month11"])
+					month12 = str(forecast["month12"])
+					month13 = str(forecast["month13"])
+					month14 = str(forecast["month14"])
+					month15 = str(forecast["month15"])
+					month16 = str(forecast["month16"])
+					month17 = str(forecast["month17"])
+					month18 = str(forecast["month18"])
+		
+					if i == 0:
+				}}
+					<th style="width: 100px;"><input type="hidden" name="month1" value="{{=month1}}">{{=month1}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month2" value="{{=month2}}">{{=month2}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month3" value="{{=month3}}">{{=month3}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month4" value="{{=month4}}">{{=month4}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month5" value="{{=month5}}">{{=month5}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month6" value="{{=month6}}">{{=month6}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month7" value="{{=month7}}">{{=month7}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month8" value="{{=month8}}">{{=month8}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month9" value="{{=month9}}">{{=month9}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month10" value="{{=month10}}">{{=month10}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month11" value="{{=month11}}">{{=month11}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month12" value="{{=month12}}">{{=month12}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month13" value="{{=month13}}">{{=month13}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month14" value="{{=month14}}">{{=month14}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month15" value="{{=month15}}">{{=month15}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month16" value="{{=month16}}">{{=month16}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month17" value="{{=month17}}">{{=month17}}</th>
+					<th style="width: 100px;"><input type="hidden" name="month18" value="{{=month18}}">{{=month18}}</th>
+					<th style="width: 100px;">Total</th>  
+					{{pass}}
+				{{pass}}
+			</tr>
+
+		<!-- total row -->
+		{{	
+			price = 0
+			item_wise_total = 0
+			month1_total = 0
+			month2_total = 0
+			month3_total = 0
+			month4_total = 0
+			month5_total = 0
+			month6_total = 0
+			month7_total = 0
+			month8_total = 0
+			month9_total = 0
+			month10_total = 0
+			month11_total = 0
+			month12_total = 0
+			month13_total = 0
+			month14_total = 0
+			month15_total = 0
+			month16_total = 0
+			month17_total = 0
+			month18_total = 0
+			total_column_sum = 0
+			total_row_sum = 0
+			total_row_column_sum = 0
+		}}
+		{{for i in range(len(forecast_records)):
+			forcast = forecast_records[i]
+
+			if i == 0:
+				i += 1
+				continue
+
+			item_code = str(forcast["item_code"])
+			item_name = str(forcast["item_name"])
+			UoM = str(forcast["UoM"])
+
+			forcasting_first_date = str(forcast["forcasting_first_date"])
+
+			get_item_price_sql = "SELECT price FROM sm_item  where item_id = '"+str(item_code)+"' group by item_id limit 1 ;"
+			get_item_price = db.executesql(get_item_price_sql, as_dict = True)
+			price = get_item_price[0]['price']
+
+			if planning_month != forcasting_first_date:
+				month1 = forcast["month1"]
+				month2 = forcast["month2"]
+				month3 = forcast["month3"]
+				month4 = forcast["month4"]
+				month5 = forcast["month5"]
+				month6 = forcast["month6"]
+				month7 = forcast["month7"]
+				month8 = forcast["month8"]
+				month9 = forcast["month9"]
+				month10 = forcast["month10"]
+				month11 = forcast["month11"]
+				month12 = forcast["month12"]
+				month13 = forcast["month13"]
+				month14 = forcast["month14"]
+				month15 = forcast["month15"]
+				month16 = forcast["month16"]
+				month17 = forcast["month17"]
+				month18 = '0'
+			
+			else:
+				month1 = forcast["month1"]
+				month2 = forcast["month2"]
+				month3 = forcast["month3"]
+				month4 = forcast["month4"]
+				month5 = forcast["month5"]
+				month6 = forcast["month6"]
+				month7 = forcast["month7"]
+				month8 = forcast["month8"]
+				month9 = forcast["month9"]
+				month10 = forcast["month10"]
+				month11 = forcast["month11"]
+				month12 = forcast["month12"]
+				month13 = forcast["month13"]
+				month14 = forcast["month14"]
+				month15 = forcast["month15"]
+				month16 = forcast["month16"]
+				month17 = forcast["month17"]
+				month18 = forcast["month18"]
+
+			pass
+
+			item_wise_total = float(month1) + float(month2) + float(month3) + float(month4) + float(month5) + float(month6) + float(month7) + float(month8) + float(month9) + float(month10) + float(month11) + float(month12) + float(month13) + float(month14) + float(month15) + float(month16) + float(month17) + float(month18)
+
+			total_column_sum += item_wise_total
+
+			try:
+				month1_total += float(month1) * float(price)
+				month1_total = round(month1_total, 2) 
+				month2_total += float(month2) * float(price)
+				month2_total = round(month2_total, 2)
+				month3_total += float(month3) * float(price)
+				month3_total = round(month3_total, 2)
+				month4_total += float(month4) * float(price)
+				month4_total = round(month4_total, 2)
+				month5_total += float(month5) * float(price)
+				month5_total = round(month5_total, 2)
+				month6_total += float(month6) * float(price)
+				month6_total = round(month6_total, 2)
+				month7_total += float(month7) * float(price)
+				month7_total = round(month7_total, 2)
+				month8_total += float(month8) * float(price)
+				month8_total = round(month8_total, 2)
+				month9_total += float(month9) * float(price)
+				month9_total = round(month9_total, 2)
+				month10_total += float(month10) * float(price)
+				month10_total = round(month10_total, 2)
+				month11_total += float(month11) * float(price)
+				month11_total = round(month11_total, 2)
+				month12_total += float(month12) * float(price)
+				month12_total = round(month12_total, 2)
+				month13_total += float(month13) * float(price)
+				month13_total = round(month13_total, 2)
+				month14_total += float(month14) * float(price)
+				month14_total = round(month14_total, 2)
+				month15_total += float(month15) * float(price)
+				month15_total = round(month15_total, 2)
+				month16_total += float(month16) * float(price)
+				month16_total = round(month16_total, 2)
+				month17_total += float(month17) * float(price)
+				month17_total = round(month17_total, 2)
+				month18_total += float(month18) * float(price)
+				month18_total = round(month18_total, 2)
+			except:
+				pass
+			i += 1
+		}}	
+		{{pass}}
+			<!-- total row  -->
+			<tr class="single_row" style="font-size: 13px; font-weight: 600;">
+				<td style="position: sticky; left: 0; z-index: 1;"></td>
+				<td style="position: sticky; left: 0; z-index: 1;"></td>
+				<td style="position: sticky; left: 247px; z-index: 1; background-color: #eefaec;">Total:</td>
+				<td>{{='{:20,d}'.format(int(month1_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month2_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month3_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month4_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month5_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month6_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month7_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month8_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month9_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month10_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month11_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month12_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month13_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month14_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month15_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month16_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month17_total))}}</td>
+				<td>{{='{:20,d}'.format(int(month18_total))}}</td>
+				{{total_row_sum = float(month1_total) + float(month2_total) +float(month3_total) +float(month4_total) +float(month5_total) +float(month6_total) +float(month7_total) +float(month8_total) +float(month9_total) +float(month10_total) +float(month11_total) +float(month12_total) +float(month13_total) +float(month14_total) +float(month15_total) +float(month16_total) +float(month17_total) + float(month18_total)}}
+				{{total_row_column_sum = total_column_sum + total_row_sum}}
+				{{total_row_column_sum = round(total_row_column_sum, 2)}}
+				<td>{{='{:20,d}'.format(int(total_row_column_sum))}}</td>
+			</tr>
+
+		<!-- data rows  -->
+		{{	
+			price = 0
+			item_wise_total = 0
+			month1_total = 0
+			month2_total = 0
+			month3_total = 0
+			month4_total = 0
+			month5_total = 0
+			month6_total = 0
+			month7_total = 0
+			month8_total = 0
+			month9_total = 0
+			month10_total = 0
+			month11_total = 0
+			month12_total = 0
+			month13_total = 0
+			month14_total = 0
+			month15_total = 0
+			month16_total = 0
+			month17_total = 0
+			month18_total = 0
+			total_column_sum = 0
+			total_row_sum = 0
+			total_row_column_sum = 0
+		}}
+		{{
+			index = []
+			index = list(range(1, len(forecast_records) + 1))
+		}}
+		{{for i, _ in enumerate(index):
+			forcast = forecast_records[i]
+			processed = processed_records[i]
+
+			if i == 0:
+				i += 1
+				continue
+
+			temp_month1 = round(float(processed["month1"]), 2)
+			temp_month2 = round(float(processed["month2"]), 2)
+			temp_month3 = round(float(processed["month3"]), 2)
+			temp_month4 = round(float(processed["month4"]), 2)
+			temp_month5 = round(float(processed["month5"]), 2)
+			temp_month6 = round(float(processed["month6"]), 2)
+			temp_month7 = round(float(processed["month7"]), 2)
+			temp_month8 = round(float(processed["month8"]), 2)
+			temp_month9 = round(float(processed["month9"]), 2)
+			temp_month10 = round(float(processed["month10"]), 2)
+			temp_month11 = round(float(processed["month11"]), 2)
+			temp_month12 = round(float(processed["month12"]), 2)
+			temp_month13 = round(float(processed["month13"]), 2)
+			temp_month14 = round(float(processed["month14"]), 2)
+			temp_month15 = round(float(processed["month15"]), 2)
+			temp_month16 = round(float(processed["month16"]), 2)
+			temp_month17 = round(float(processed["month17"]), 2)
+			temp_month18 = round(float(processed["month18"]), 2)
+
+			item_code = str(forcast["item_code"])
+			item_name = str(forcast["item_name"])
+			UoM = str(forcast["UoM"])
+
+			forcasting_first_date = str(forcast["forcasting_first_date"])
+
+			get_item_price_sql = "SELECT price FROM sm_item  where item_id = '"+str(item_code)+"' group by item_id limit 1 ;"
+			get_item_price = db.executesql(get_item_price_sql, as_dict = True)
+			price = get_item_price[0]['price']
+
+			if planning_month != forcasting_first_date:
+				month1 = forcast["month1"]
+				month2 = forcast["month2"]
+				month3 = forcast["month3"]
+				month4 = forcast["month4"]
+				month5 = forcast["month5"]
+				month6 = forcast["month6"]
+				month7 = forcast["month7"]
+				month8 = forcast["month8"]
+				month9 = forcast["month9"]
+				month10 = forcast["month10"]
+				month11 = forcast["month11"]
+				month12 = forcast["month12"]
+				month13 = forcast["month13"]
+				month14 = forcast["month14"]
+				month15 = forcast["month15"]
+				month16 = forcast["month16"]
+				month17 = forcast["month17"]
+				month18 = '0'
+			
+			else:
+				month1 = forcast["month1"]
+				month2 = forcast["month2"]
+				month3 = forcast["month3"]
+				month4 = forcast["month4"]
+				month5 = forcast["month5"]
+				month6 = forcast["month6"]
+				month7 = forcast["month7"]
+				month8 = forcast["month8"]
+				month9 = forcast["month9"]
+				month10 = forcast["month10"]
+				month11 = forcast["month11"]
+				month12 = forcast["month12"]
+				month13 = forcast["month13"]
+				month14 = forcast["month14"]
+				month15 = forcast["month15"]
+				month16 = forcast["month16"]
+				month17 = forcast["month17"]
+				month18 = forcast["month18"]
+
+			pass
+
+			item_wise_total = float(month1) + float(month2) + float(month3) + float(month4) + float(month5) + float(month6) + float(month7) + float(month8) + float(month9) + float(month10) + float(month11) + float(month12) + float(month13) + float(month14) + float(month15) + float(month16) + float(month17) + float(month18)
+
+			total_column_sum += item_wise_total
+
+			try:
+				month1_total += float(month1) * float(price)
+				month1_total = round(month1_total, 2)
+				month2_total += float(month2) * float(price)
+				month2_total = round(month2_total, 2)
+				month3_total += float(month3) * float(price)
+				month3_total = round(month3_total, 2)
+				month4_total += float(month4) * float(price)
+				month4_total = round(month4_total, 2)
+				month5_total += float(month5) * float(price)
+				month5_total = round(month5_total, 2)
+				month6_total += float(month6) * float(price)
+				month6_total = round(month6_total, 2)
+				month7_total += float(month7) * float(price)
+				month7_total = round(month7_total, 2)
+				month8_total += float(month8) * float(price)
+				month8_total = round(month8_total, 2)
+				month9_total += float(month9) * float(price)
+				month9_total = round(month9_total, 2)
+				month10_total += float(month10) * float(price)
+				month10_total = round(month10_total, 2)
+				month11_total += float(month11) * float(price)
+				month11_total = round(month11_total, 2)
+				month12_total += float(month12) * float(price)
+				month12_total = round(month12_total, 2)
+				month13_total += float(month13) * float(price)
+				month13_total = round(month13_total, 2)
+				month14_total += float(month14) * float(price)
+				month14_total = round(month14_total, 2)
+				month15_total += float(month15) * float(price)
+				month15_total = round(month15_total, 2)
+				month16_total += float(month16) * float(price)
+				month16_total = round(month16_total, 2)
+				month17_total += float(month17) * float(price)
+				month17_total = round(month17_total, 2)
+				month18_total += float(month18) * float(price)
+				month18_total = round(month18_total, 2)
+
+			except:
+				pass
+
+			i += 1
+		}}
+			<!-- data row  -->
+			<tr class="single_row">
+				<td style="position: sticky; left: 0; z-index: 1; text-align: left; padding-left: 5px;">{{=item_code}}</td>
+				<td style="position: sticky; left: 80px; z-index: 1; text-align: left; padding-left: 5px;">{{=item_name}}</td>
+				<td style="text-align: left; padding-left: 5px;">{{=UoM}}</td>
+				{{if status == 'POSTED' or status == 'APPROVED':}}
+					{{if float(month1) > float(temp_month1):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month1))}}</td>
+					{{elif float(month1) < float(temp_month1):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month1))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month1))}}</td>
+					{{pass}}
+					
+					{{if float(month2) > float(temp_month2):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month2))}}</td>
+					{{elif  float(month2) < float(temp_month2):}}      
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month2))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month2))}}</td>
+					{{pass}}
+
+					{{if float(month3) > float(temp_month3):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month3))}}</td>
+					{{elif  float(month3) < float(temp_month3):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month3))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month3))}}</td>
+					{{pass}}
+
+					{{if float(month4) > float(temp_month4):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month4))}}</td>
+					{{elif  float(month4) < float(temp_month4):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month4))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month4))}}</td>
+					{{pass}}
+
+					{{if float(month5) > float(temp_month5):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month5))}}</td>
+					{{elif  float(month5) < float(temp_month5):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month5))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month5))}}</td>
+					{{pass}}
+
+					{{if float(month6) > float(temp_month6):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month6))}}</td>
+					{{elif  float(month6) < float(temp_month6):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month6))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month6))}}</td>
+					{{pass}}
+
+					{{if float(month7) > float(temp_month7):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month7))}}</td>
+					{{elif  float(month7) < float(temp_month7):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month7))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month7))}}</td>
+					{{pass}}
+
+					{{if float(month8) > float(temp_month8):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month8))}}</td>
+					{{elif  float(month8) < float(temp_month8):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month8))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month8))}}</td>
+					{{pass}}
+
+					{{if float(month9) > float(temp_month9):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month9))}}</td>
+					{{elif  float(month9) < float(temp_month9):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month9))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month9))}}</td>
+					{{pass}}
+
+					{{if float(month10) > float(temp_month10):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month10))}}</td>
+					{{elif  float(month10) < float(temp_month10):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month10))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month10))}}</td>
+					{{pass}}
+
+					{{if float(month11) > float(temp_month11):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month11))}}</td>
+					{{elif  float(month11) < float(temp_month11):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month11))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month11))}}</td>
+					{{pass}}
+
+					{{if float(month12) > float(temp_month12):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month12))}}</td>
+					{{elif  float(month12) < float(temp_month12):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month12))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month12))}}</td>
+					{{pass}}
+
+					{{if float(month13) > float(temp_month13):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month13))}}</td>
+					{{elif  float(month13) < float(temp_month13):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month13))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month13))}}</td>
+					{{pass}}
+
+					{{if float(month14) > float(temp_month14):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month14))}}</td>
+					{{elif  float(month14) < float(temp_month14):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month14))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month14))}}</td>
+					{{pass}}
+
+					{{if float(month15) > float(temp_month15):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month15))}}</td>
+					{{elif  float(month15) < float(temp_month15):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month15))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month15))}}</td>
+					{{pass}}
+
+					{{if float(month16) > float(temp_month16):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month16))}}</td>
+					{{elif  float(month16) < float(temp_month16):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month16))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month16))}}</td>
+					{{pass}}
+
+					{{if float(month17) > float(temp_month17):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month17))}}</td>
+					{{elif  float(month17) < float(temp_month17):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month17))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month17))}}</td>
+					{{pass}}
+
+					{{if float(month18) > float(temp_month18):}}
+						<td style="color: blue;">{{='{:20,.2f}'.format(float(month18))}}</td>
+					{{elif  float(month18) < float(temp_month18):}}
+						<td style="color: red;">{{='{:20,.2f}'.format(float(month18))}}</td>
+					{{else:}}
+						<td>{{='{:20,.2f}'.format(float(month18))}}</td>
+					{{pass}}
+
+				{{else:}}
+					{{if float(month1) > float(temp_month1):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input1" value="{{=float(month1)}}"></td>
+					{{elif float(month1) < float(temp_month1):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input1" value="{{=float(month1)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input1" value="{{=float(month1)}}"></td>
+					{{pass}}
+					
+					{{if float(month2) > float(temp_month2):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input2" value="{{=float(month2)}}"></td>
+					{{elif float(month2) < float(temp_month2):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input2" value="{{=float(month2)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input2" value="{{=float(month2)}}"></td>
+					{{pass}}
+
+					{{if float(month3) > float(temp_month3):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input3" value="{{=float(month3)}}"></td>
+					{{elif float(month3) < float(temp_month3):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input3" value="{{=float(month3)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input3" value="{{=float(month3)}}"></td>
+					{{pass}}
+
+					{{if float(month4) > float(temp_month4):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input4" value="{{=float(month4)}}"></td>
+					{{elif  float(month4) < float(temp_month4):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input4" value="{{=float(month4)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input4" value="{{=float(month4)}}"></td>
+					{{pass}}
+
+					{{if float(month5) > float(temp_month5):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input5" value="{{=float(month5)}}"></td>
+					{{elif float(month5) < float(temp_month5):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input5" value="{{=float(month5)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input5" value="{{=float(month5)}}"></td>
+					{{pass}}
+
+					{{if float(month6) > float(temp_month6):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input6" value="{{=float(month6)}}"></td>
+					{{elif float(month6) < float(temp_month6):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input6" value="{{=float(month6)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input6" value="{{=float(month6)}}"></td>
+					{{pass}}
+
+					{{if float(month7) > float(temp_month7):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input7" value="{{=float(month7)}}"></td>
+					{{elif float(month7) < float(temp_month7):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input7" value="{{=float(month7)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input7" value="{{=float(month7)}}"></td>
+					{{pass}}
+
+					{{if float(month8) > float(temp_month8):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input8" value="{{=float(month8)}}"></td>
+					{{elif float(month8) < float(temp_month8):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input8" value="{{=float(month8)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input8" value="{{=float(month8)}}"></td>
+					{{pass}}
+
+					{{if float(month9) > float(temp_month9):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input9" value="{{=float(month9)}}"></td>
+					{{elif float(month9) < float(temp_month9):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input9" value="{{=float(month9)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input9" value="{{=float(month9)}}"></td>
+					{{pass}}
+
+					{{if float(month10) > float(temp_month10):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input10" value="{{loat(month10)}}"></td>
+					{{elif float(month10) < float(temp_month10):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input10" value="{{=float(month10)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input10" value="{{=float(month10)}}"></td>
+					{{pass}}
+
+					{{if float(month11) > float(temp_month11):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input11" value="{{=float(month11)}}"></td>
+					{{elif float(month11) < float(temp_month11):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input11" value="{{=float(month11)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input11" value="{{=float(month11)}}"></td>
+					{{pass}}
+
+					{{if float(month12) > float(temp_month12):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input12" value="{{=float(month12)}}"></td>
+					{{elif float(month12) < float(temp_month12):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input12" value="{{=float(month12)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input12" value="{{=float(month12)}}"></td>
+					{{pass}}
+
+					{{if float(month13) > float(temp_month13):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input13" value="{{=float(month13)}}"></td>
+					{{elif float(month13) < float(temp_month13):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input13" value="{{=float(month13)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input13" value="{{=float(month13)}}"></td>
+					{{pass}}
+
+					{{if float(month14) > float(temp_month14):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input14" value="{{=float(month14)}}"></td>
+					{{elif float(month14) < float(temp_month14):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input14" value="{{=float(month14)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input14" value="{{=float(month14)}}"></td>
+					{{pass}}
+
+					{{if float(month15) > float(temp_month15):}}
+					<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input15" value="{{=float(month15)}}"></td>
+					{{elif float(month15) < float(temp_month15):}}
+					<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input15" value="{{=float(month15)}}"></td>
+					{{else:}}
+					<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input15" value="{{=float(month15)}}"></td>
+					{{pass}}
+					
+					{{if float(month16) > float(temp_month16):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input16" value="{{=float(month16)}}"></td>
+					{{elif float(month16) < float(temp_month16):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input16" value="{{=float(month16)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input16" value="{{=float(month16)}}"></td>
+					{{pass}}
+
+					{{if float(month17) > float(temp_month17):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input17" value="{{=float(month17)}}"></td>
+					{{elif float(month17) < float(temp_month17):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input17" value="{{=float(month17)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input17" value="{{=float(month17)}}"></td>
+					{{pass}}
+
+					{{if float(month18) > float(temp_month18):}}
+						<td><input style="color: blue;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input18" value="{{=float(month18)}}"></td>
+					{{elif float(month18) < float(temp_month18):}}
+						<td><input style="color: red;" type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input18" value="{{=float(month18)}}"></td>
+					{{else:}}
+						<td><input type="text" id="qty_input" pattern="^\d+(\.\d{1,2})?$" name="input18" value="{{=float(month18)}}"></td>
+					{{pass}}
+
+				{{pass}}
+
+				<input type="hidden" name="item_code" value="{{=forcast['item_code']}}">
+
+				{{if session.user_type == 'sup':}}
+					<td style="font-size: 13px; font-weight: 600;">{{='{:20,d}'.format(int(item_wise_total))}}</td>
+				{{pass}}
+			</tr>
+		{{pass}}
+
+		{{if status != 'POSTED':}}
+			<input name="submit_btn_old" type="submit" value="Update" style="height: 30px; width: 80px; margin: 0px 10px 10px 0px; padding: 5px 5px 5px 10px; font-size: 13px; border: 1px solid {{=session.text_color}}; border-radius: 20px; cursor: pointer; color: {{=session.button_text_color}}; background-color: {{=session.button_color}}"/>
+			<input name="post_btn" type="submit" value="Post" style="height: 30px; width: 80px; margin: 0px 10px 10px 0px; padding: 5px 5px 5px 10px; font-size: 13px; border: 1px solid {{=session.text_color}}; border-radius: 20px; cursor: pointer; color: {{=session.button_text_color}}; background-color: {{=session.button_color}}"/>
+			{{if session.update_flash:}}
+				<span id="flashMessage" style="color: {{=session.button_color}}">{{=session.update_flash}}</span>
+				{{session.update_flash = None}}
+			{{pass}}
+
+		{{elif status == 'POSTED':}}
+			<input name="submit_btn_new" type="submit" value="Update" style="height: 30px; width: 80px; margin: 0px 10px 10px 0px; padding: 5px 5px 5px 10px; font-size: 13px; border: 1px solid #949494; border-radius: 20px; cursor: pointer; color: #949494; background-color: #d6d6d6" disabled/>
+			<input name="post_btn" type="submit" value="Post" style="height: 30px; width: 80px; margin: 0px 10px 10px 0px; padding: 5px 5px 5px 10px; font-size: 13px; border: 1px solid #949494; border-radius: 20px; cursor: pointer; color: #949494; background-color: #d6d6d6" disabled/>
+			{{if session.post_flash:}}
+				<span id="flashMessage" style="color: {{=session.button_color}}">{{=session.post_flash}}</span>
+				{{session.post_flash = None}}
+			{{pass}}
+
+		{{pass}}
+		</form>
+	</table>
+{{pass}}

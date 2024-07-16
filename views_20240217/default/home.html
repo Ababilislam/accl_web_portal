@@ -1,0 +1,89 @@
+{{extend 'layout.html'}}
+<style>
+    .button-container button {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        justify-content: center;
+        align-items: center;
+        width: 120px;
+        height: 30px;
+        color: whitesmoke;
+        background-color: rgb(153, 158, 150);
+        border-radius: 10px;
+        border: 2px solid #3498db;
+        
+    }
+    .hidden-buttons button {
+    	background-color: rgb(116, 228, 116);
+        display: flex;
+        margin-bottom: 5px;
+        color: white;
+         width: 120px;
+         height: 20px;
+         border-radius: 5px;
+    }
+    .allbuttonsSection{
+/*        background-color: white;*/
+        padding-left: 30px;
+    }
+</style>
+<div class="allbuttonsSection">
+    <div class="button-container">
+    <button id="showButtons2" onclick="toggleButtons('hiddenButtons2')">FieldForce</button>
+    <div id="hiddenButtons2" class="hidden-buttons">
+        <button>Button 4</button>
+        <button>Button 5</button>
+        <button>Button 6</button>
+    </div>
+</div>
+
+<div class="button-container">
+    <button id="showButtons3" onclick="toggleButtons('hiddenButtons3')">Customer</button>
+    <div id="hiddenButtons3" class="hidden-buttons">
+        <button>Button 7</button>
+        <button>Button 8</button>
+        <button>Button 9</button>
+    </div>
+</div>
+
+<div class="button-container">
+    <button id="showButtons4" onclick="toggleButtons('hiddenButtons4')">Inventory</button>
+    <div id="hiddenButtons4" class="hidden-buttons">
+        <button>Button 10</button>
+        <button>Button 11</button>
+        <button>Button 12</button>
+        <button>Button 10</button>
+        <button>Button 11</button>
+        <button>Button 12</button>
+    </div>
+</div>
+
+<div class="button-container">
+    <button id="showButtons5" onclick="toggleButtons('hiddenButtons5')">Reports</button>
+    <div id="hiddenButtons5" class="hidden-buttons">
+        <button>Button 13</button>
+        <button>Button 14</button>
+        <button>Button 15</button>
+    </div>
+</div>
+</div>
+
+<script>
+    function toggleButtons(hiddenButtonsId) {
+        var allHiddenButtons = document.querySelectorAll('.hidden-buttons');
+        
+        allHiddenButtons.forEach(function(buttonsContainer) {
+            if (buttonsContainer.id !== hiddenButtonsId) {
+                buttonsContainer.style.display = 'none';
+            }
+        });
+
+        var hiddenButtons = document.getElementById(hiddenButtonsId);
+        if (hiddenButtons.style.display === 'none') {
+            hiddenButtons.style.display = 'block';
+        } else {
+            hiddenButtons.style.display = 'none';
+        }
+    }
+</script>

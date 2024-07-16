@@ -1,0 +1,128 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<style>
+	:root {
+            --bg_color: {{=session.bg_color}};
+            --layout_color: {{=session.layout_color}};
+            --button_color: {{=session.button_color}};
+            --button_text_color: {{=session.button_text_color}};
+            --heading_text: {{=session.heading_text}};
+            --text_color: {{=session.text_color}};
+        }
+	.content {
+		margin: 10px;
+	}
+	.upload_row p {
+		padding-top: 10px;
+		font-weight: 300;
+	}
+	#notice_data {
+		height: 150px;
+		width: 100%;
+		font-size: 13px;
+		border: 1px solid rgb(188, 188, 188);
+	}
+	.content input {
+		height: 32px;
+		width: 80px;
+		margin: 10px 0px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+    .data-table {
+		margin-top: 50px;
+		width: 90%;
+	}
+	.data-table .all_data td {
+		width: 250px;
+		padding: 10px;
+		text-align: center;
+		font-size: 13px;
+		border: 1px solid black;
+		background: {{=session.button_color}}
+	}
+	.data-table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 12px;
+		border: 1px solid black;
+	}
+	.data-table .single_row td {
+		border: 1px solid black;
+		height: 30px;
+	}
+</style>
+<script>
+	 setTimeout(function() {
+        document.getElementById('flashMessage').style.display = 'none';
+    }, 2000);
+	 setTimeout(function() {
+        document.getElementById('flashMessage_wrning').style.display = 'none';
+    }, 2000);
+</script>
+{{end}}
+
+
+<!-- Upload row -->
+<div class="content">
+
+    {{if session.flash_msg:}}
+    <span id="flashMessage" style="position: fixed; top: 10px; right: 10px; z-index: 1000; background-color: var(--layout_color); color: var(--button_color); padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">{{=session.flash_msg}}</span>
+	{{session.flash_msg=""}}
+	{{pass}}
+    {{if session.flash_msg_w:}}
+	<span id="flashMessage_wrning" style="position: fixed; top: 10px; right: 10px; z-index: 1000; background-color: var(--layout_color); color: red; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">{{=session.flash_msg_w}}</span>
+	{{session.flash_msg_w=""}}
+    {{pass}}
+
+	<form name="batch_client" id="batch_client" action="{{=URL(c='notice',f='submit_notice')}}" method="post">
+		<div class="upload_row">
+			<p>Insert notice below:</p>
+			<textarea name="notice_data" id="notice_data" placeholder=""></textarea>
+			<input type="submit" name="save_btn" id="save_btn" value="Save" title="Save Data"/>
+		</div>
+	</form>
+	<div style="width: 100%;">
+		<!-- data table  -->
+		<table class="data-table" width="90%" border="1px solid">
+			<!-- <form name="form1" action="POST"> -->
+				<!-- <tr style="font-size: 12px;">
+				</tr> -->
+				<tr class="all_data">
+					<td style="width: 20%; color: white;">Date</td>
+					<td style="width: 65%; color: white;">Notice</td>
+					<td style="width: 15%; color: white;">Action</td>
+				</tr>
+			
+				
+				{{for i in range(len(data_records)):
+					data = data_records[i]
+					notice_id = str(data['id'])
+					notice_date = str(data["notice_date"])
+					notice = str(data["notice"])
+				}}
+				<form action="{{=URL(c='notice',f='delete_notice')}}">
+				<tr>
+					<td width="150px" style="font-size: small;">{{=notice_date}}</td>
+					<td width: "300px;" style="font-size: small;">{{=notice}}</td>
+					<!-- <td>{{=notice_id}}</td> -->
+					<td width: "80px;">
+						<input type="hidden" name="id" value="{{=notice_id}}"/>
+						<div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%; ">
+							<input type="submit" name="delete_btn" id="delete_btn" value="X" style="border-radius: 0; width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;; color: red;">
+						</div>
+					</td>
+				</tr>
+				</form>
+			{{pass}}
+		</table>
+	</div>
+</div>
+
+

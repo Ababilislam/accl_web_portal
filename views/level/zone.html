@@ -1,0 +1,216 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<link rel="stylesheet" href="{{=URL('static', 'css/level.css')}}" type="text/css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+    .top_row {
+        display: flex;
+        flex-direction: row;
+		align-items: center; 
+        justify-content: space-between;
+        padding: 10px 0 10px 0;
+    }
+
+    .top_row .region_add .id_add input {
+		width: 250px;
+        margin-right: 2px;
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+
+    .top_row .region_add .name_add input {
+		width: 250px;
+        margin-right: 2px;
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+
+    .top_row .region_add .add_btn input {
+		height: 32px;
+		width: 100px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+
+	.top_row .flash_message {
+		font-size: 13px;
+		font-weight: 500;
+		color: rgb(255, 111, 111);
+	}
+
+	.top_row .search input {
+		width: 250px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 30px;
+		border: 1px solid {{=session.button_color}}
+	}    
+
+    .top_row .search button {
+		height: 32px;
+		padding: 5px 10px 5px 10px;
+		font-size: 13px;
+		border: 0;
+        border-radius: 20px;
+        cursor: pointer;
+		background-color: {{=session.button_color}};
+		color: {{=session.button_text_color}}
+	}
+
+    .level_table {
+		margin-top: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.level_table .all_level td {
+		padding: 10px;
+		text-align: center;
+		font-size: 14px;
+		border: 1px solid black;
+		background: {{=session.button_color}}
+	}
+	
+	.level_table td {
+		font-size: 14px;
+		font-weight: 400;
+		padding: 5px;
+		align-items: center;
+	}
+
+	.level_table .single_row {
+		padding: 10px;
+		text-align: center;
+		font-size: 10px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+	
+	.level_table .single_row td {
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.level_table .single_row #next_btn {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	}
+
+	.level_table .single_row #zone_name {
+		width: 300px;
+		border: 1px solid rgb(155, 155, 155);
+	}
+
+	.level_table .single_row .button_update {
+		border: 0;
+		background-color: white;
+		cursor: pointer;
+		color: {{=session.button_color}}
+	}
+
+	#return_btn {
+		font-weight: 300;
+		font-size: 13px;
+		padding: 5px 10px;
+		border-radius: 20px;
+		border: 1px solid {{=session.button_color}};
+		background-color: {{=session.background_color}}
+	}
+</style>
+{{end}}
+
+<!-- input fields  -->
+<div class="top_row">
+    <form action="{{=URL(c='level', f='zone',args=[response.div_id, response.div_name])}}" method="post">
+        <table>
+            <tr class="region_add">
+                <td class="id_add">
+                    <input type="text" id="zone_id_input" name="zone_id_input" placeholder="Zone ID">
+                </td>
+                <td class="name_add">
+                    <input type="text" id="zone_name_input" name="zone_name_input" placeholder="Zone Name">
+                </td>
+                <td class="add_btn">
+                    <input type="submit" name="add_btn" value="Add Zone">
+                </td>
+            </tr>
+			<tr class="flash_message">
+				<td>
+					{{=response.flash}}
+				</td>
+			</tr>
+        </table>
+    </form>
+    <div class="search">
+        <input type="text" id="levelInput" name="levelInput" placeholder="Enter Level ID/Name">
+        <button type="button" onclick="search()" name="search_btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+</div>
+
+<!-- return to previous page -->     
+<div class="go_back"> 
+	<form action="{{=URL(c='level',f='zone',args=[response.div_id, response.div_name])}}" method="post">
+		<input type="submit" name="return_btn" id="return_btn" value="Division: {{=response.div_name}} ({{=response.div_id}})">
+	</form>
+</div>
+
+<!-- division display table -->
+<table class="level_table">
+	<form name="form1" method="post">
+		<tr class="all_level">
+			<td width="130px">Zone ID</td>
+			<td width="55px"></td>
+			<td width="350px">Zone Name</td>
+			<td width="100px"></td>
+		</tr>
+	</form>
+
+	{{for i in range(len(level_records)):
+		index = i 
+		level = level_records[i]
+		zone_id = str(level["level1"])
+		zone_name = str(level["level1_name"])
+	}}
+
+	<tr class="single_row">
+		<td>{{=zone_id}}</td> 
+		<td class="next_btn">   
+			<form action="{{=URL(c='level',f='area', args=[response.div_id, response.div_name, zone_id, zone_name])}}" method="get">
+				<input type="submit" name="next_btn" id="next_btn" value=">>">
+			</form>
+		</td>
+		<form action="{{=URL(c='level', f='zone', args=[zone_id])}}" method="post">
+			<td>
+				<input type="text" name="zone_name" id="zone_name" value="{{=zone_name}}">
+			</td>
+			<td class="update_btn">
+				<input type="submit" name="edit_btn" id="edit_btn" value="Update">
+			</td>
+		</form>
+	</tr>
+	{{pass}}
+</table>
+
+{{block script}}
+<script>
+    // url 
+    function loadContent(url) {
+        const content = document.getElementById('content');
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                content.innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching content:', error));
+    }
+</script>
+{{end}}

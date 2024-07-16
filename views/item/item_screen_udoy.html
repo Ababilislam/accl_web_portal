@@ -1,0 +1,562 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+<style>
+	.page_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding-top: 10px;
+	}
+	.page_row td {
+		padding-left: 3px;
+	}
+	.page_row td input {
+		padding: 5px;
+		border: 1px solid rgb(179, 179, 179);
+		border-radius: 20px;
+		height: 30px;
+		width: 30px;
+		font-size: 13px;
+		font-weight: 300;
+	}
+	.button_row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		width: 100%;
+		justify-content: flex-start;
+		padding-top: 10px;
+	}
+	.button_row input {
+		width: 150px;
+		padding: 5px 10px;
+		font-size: 12px;
+		border-radius: 20px;
+		border: 1px solid {{=session.button_color}}
+	}
+	.button_row input ::placeholder {
+		font-size: 12px;
+	}
+	.button_row .action_button {
+		width: 50px;
+		padding: 5px 10px 5px 10px;
+		font-size: 13px;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	.btns {
+		display: flex;
+		flex-direction: column;
+		padding-top: 10px;
+	}
+	.btns .col {
+		justify-content: space-between;
+	}
+	.btns h6 {
+		font-weight: 300;
+		font-size: 14px;
+		padding: 10px 0 0 0;
+		margin-bottom: 0;
+	}
+	.btns td {
+		padding-left: 3px;
+	}
+	.btns .btn-open-popup {
+		height: 32px;
+		font-size: 13px;
+		padding: 5px 10px 5px 10px;
+		border: 0;
+		border-radius: 20px;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}}
+	}
+	.btns .btn-open-popup i {
+		padding-left: 6px;
+	}
+	.items-table {
+		margin-top: 10px;
+		width: 1130px;
+	}
+	.items-table .all_items td {
+		width: 250px;
+		padding: 10px;
+		text-align: center;
+		font-size: 12px;
+		border: 1px solid black;
+		background: {{=session.button_color}};
+	}
+	.items-table .single_row {
+		/* width: 250px;  */
+		padding: 10px;
+		text-align: center;
+		font-size: 10px;
+		border: 1px solid black;
+	}
+	.items-table .single_row td {
+		border: 1px solid black;
+		height: 30px;
+	}
+	.items-table .single_row input {
+		cursor: pointer;
+		border: 0;
+		background-color: {{=session.bg_color}}
+	}
+	.items-table .single_row input:hover {
+		color: {{=session.button_color}};
+	}
+	#item_popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+		background: rgb(231, 231, 231, 0.8);
+	}
+	#item_popup.active {
+		display: flex;
+	}
+	.popup-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 400px;
+		width: 700px;
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		background: {{=session.bg_color}};
+	}
+	.popup-content form {
+		height: 100%;
+		width: 100%;
+	}
+	#item_popup .input_row {
+		display: flex;
+		flex-direction: row;
+		padding: 10px 0;
+	}
+	.top_row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.top_row h4 {
+		padding-top: 10px;
+		font-weight: 300;
+		color: {{=session.button_color}};
+	}
+	.top_row button {
+		padding-top: 5px;
+		border: 0;
+		cursor: pointer;
+		background-color: {{=session.bg_color}};
+	}
+	.top_row .fa-xmark {
+		color: {{=session.button_color}};
+	}	
+	.input_row {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+	.input_row .item_add tr td {
+		padding-bottom: 15px;
+	}
+	.input_row .item_add input {
+		width: 200px; 
+		padding: 5px 10px;
+		font-size: 13px;
+        border-radius: 20px;
+		border: 1px solid {{=session.button_color}};
+	}
+	.submit_row {
+		text-align: center;
+	}
+    .submit_row input {
+		height: 32px;
+		width: 110px;
+		margin-top: 10px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 1px solid black;
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.button_text_color}};
+		background-color: {{=session.button_color}};
+	}
+	.submit_row input:hover {
+		background-color: white;     		
+		box-shadow: 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5);
+		color: {{=session.text_color}}
+	}
+
+	.status {
+		height: 32px;
+		width: 200px;
+		margin-top: 0px;
+		padding: 5px 10px;
+		font-size: 13px;
+		border: 1px solid var(--button_color);
+        border-radius: 20px;
+		cursor: pointer;
+		color: {{=session.text_color}};
+		background-color: var(--button_text_color);
+	}
+</style>
+{{end}}
+
+<!-- Page Number Row -->
+<div class="page_row">
+	<table>
+		<tr>
+			{{current_page = int(page)}}
+			{{start_index = max(1, current_page - 2)}}
+			{{last_index = start_index + 5}}
+			{{for no in range(start_index, last_index):}}
+			<td>
+				<!-- <form action="{{=URL(c='item', f='item_screen', vars={'item_id_name': session.item_id_name, 'category_id': session.category_id, 'manufacturer': session.manufacturer, 'price': session.price, 'status': session.status})}}"> -->
+				<form  action="{{=URL(c='item', f='item_screen')}}">
+					{{if current_page == no:}}
+					<input style="color: white; border: 1px solid black; background-color: {{=session.button_color}}" id="page_no" type="submit" style="margin-left: 10px;" name="page_no" value="{{=no}}">
+					{{else:}}
+					<input style="background-color: white;" id="page_no" type="submit" style="margin-left: 10px;" name="page_no" value="{{=no}}">
+					{{pass}}
+				</form>
+			</td>
+			{{pass}}
+		</tr>
+	</table>
+</div>
+
+<!-- Action Button Section -->
+<div class="button_row">
+	<form id="form2" name="form2" method="post" action="{{=URL(c='item',f='item_screen')}}">
+		{{if session.item_id_name == '' or session.item_id_name == None:}}
+		<input autocomplete="off" class="Search_field" name="item_id_name" type="text" id="item_id_name" value="" placeholder="Item Code"/>
+		{{else:}}
+		<input class="Search_field" name="item_id_name" type="text" id="item_id_name" value="{{=session.item_id_name}}" autocomplete="on"/>
+		{{pass}}
+
+		{{if session.category_id == '' or session.category_id == None:}}
+		<input class="Search_field" name="category_id" type="text" id="category_id" value="" placeholder="Product Category" autocomplete="off"/>
+		{{else:}}
+		<input class="Search_field" name="category_id" type="text" id="category_id" value="{{=session.category_id}}" autocomplete="on"/>
+		{{pass}}
+
+		{{if session.manufacturer == '' or session.manufacturer == None:}}
+		<input class="Search_field" name="manufacturer" type="text" id="manufacturer" value="" placeholder="Brand"/>
+		{{else:}}
+		<input class="Search_field" name="manufacturer" type="text" id="manufacturer" value="{{=session.manufacturer}}" autocomplete="on"/>
+		{{pass}}
+
+		<!-- {{#if session.price == '' or session.price == None:}}
+		<input class="Search_field" name="price" type="text" id="price" value="" placeholder="Price"/>
+		{{#else:}}
+		<input class="Search_field" name="price" type="text" id="price" value="{{#=session.price}}" autocomplete="on"/>
+		{{#pass}} -->
+
+		{{if session.status == '' or session.status == None:}}
+		<input class="Search_field" name="status" type="text" id="status" value="" placeholder="Status"/>
+		{{else:}}
+		<input class="Search_field" name="status" type="text" id="status" value="{{=session.status}}" autocomplete="on"/>
+		{{pass}}
+
+		<input class="action_button" type="submit" name="filter_item_btn" id="filter_item_btn" value="Filter"/>
+		<input class="action_button" type="submit" name="all" id="all" value="All"/>
+	</form>
+</div>
+
+<!-- Add/Upload/Download Button Row-->
+<div class="btns">
+	<table>
+		<tr>
+			<td class="col">
+				<h6>Total records: {{=total}}</h6>
+			</td>
+			<td><button style="width: 100px;" class="btn-open-popup" onclick="openPopup()">Add Item<i class="fa-solid fa-plus"></i></button></td>
+			<td>
+				<a style="text-decoration: none" href="{{=URL(c='csv',f='item_batch_upload')}}">
+					<button style="width: 130px;" class="btn-open-popup">Batch Upload<i class="fa-solid fa-upload"></i></button>
+				</a>
+			</td>
+			<td>
+				<a style="text-decoration: none" href="{{=URL(c='item',f='item_download')}}">
+					<button style="width: 110px;" class="btn-open-popup">Download<i class="fa-solid fa-cloud-arrow-down"></i></button>
+				</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<!-- Item Table  -->
+<table class="items-table">
+	<form name="form1" action="POST">
+		<tr class="all_items">
+			<td style="width: 100px;">Item Code</td>
+			<!-- <td style="width: 350px;">Name</td> -->
+			<!-- <td style="width: 150px;">Pack Size</td> -->
+			<td style="width: 350px;">Item Description</td>
+			<td style="width: 80px;">Product Category</td>
+			<td style="width: 80px;">Product Class</td>
+			<td style="width: 80px;">Product Type</td>
+			<td style="width: 170px;">Brand</td>
+			<td style="width: 150px;">Origin</td>
+			<td style="width: 110px;">Status</td>
+			<td style="width: 60px; text-align: right;">Conv. Factor</td>
+			<td style="width: 80px; text-align: right;">Price</td>
+			<!-- <td style="width: 150px;">Disc. Price</td> -->
+			<!-- <td style="width: 150px;">Vat Amount</td> -->
+			<!-- <td style="width: 150px;">Total Amount</td> -->
+			<td style="width: 50px;"></td>
+		</tr>
+	</form>
+	
+	{{for i in range(len(item_records)):
+		item = item_records[i]
+		id = str(item["id"])
+		item_id = str(item["item_id"])
+		name = str(item["name"])
+		pack_size = str(item["pack_size"])
+		desc = str(item["des"])
+		category_id = str(item["category_id"])
+		category_id_sp = str(item["category_id_sp"])
+		unit_type = str(item["unit_type"])
+		manufacturer = str(item["manufacturer"])
+		#conv_factor = str(item["conv_factor"])
+		price = str(item["price"])
+		dist_price = str(item["dist_price"])
+		vat_amt = str(item["vat_amt"])
+		total_amt = str(item["total_amt"])
+		status = str(item["status"])
+		note = str(item["note"])
+	}}
+
+	<tr class="single_row">
+		<td>{{=item_id}}</td>
+		<!-- <td>{{#=name}}</td> -->
+		<!-- <td>{{#=pack_size}}</td> -->
+		<td>{{=desc}}</td>
+		<td>{{=category_id}}</td>
+		<td>{{=category_id_sp}}</td>
+		<td>{{=unit_type}}</td>
+		<td>{{=manufacturer}}</td>
+		<td>{{=note}}</td>
+		<td>{{=status}}</td>
+		<!-- <td style="text-align: right; padding-right: 5px;">{{#=conv_factor}}</td> -->
+		<td style="text-align: right; padding-right: 5px;">{{=price}}</td>
+		<!-- <td>{{#=dist_price}}</td>
+		<td>{{#=vat_amt}}</td>
+		<td>{{#=total_amt}}</td> -->
+		<td>
+			<form action="{{=URL(c = 'item', f = 'item_edit', args = [item_id])}}" method="POST">
+				<input type="submit" name="next_btn" id="next_btn" value=">>">
+			</form>
+		</td>
+	</tr>
+	{{pass}}
+</table>
+
+<!-- Popup Section -->
+<div class="popup-container" id="item_popup">
+	<div class="popup-content">
+		<form name="form1" action="{{=URL(c='item',f='item_screen')}}" method="post">
+			<div class="top_row">
+				<h4>Add Item</h4>
+				<button onclick="closePopup()" ><i class="fa-solid fa-xmark" style="color: red;"></i></button>
+			</div>
+			<div class="input_row">
+				<div class="col1">
+					<table class="item_add">
+						<tr>
+							<td class="id_add">
+								<input type="text" id="item_id_input" name="item_id_input" placeholder="Item Code">
+							</td>
+						</tr>	
+						<!-- <tr>
+							<td class="name_add">
+								<input type="text" id="item_name_input" name="item_name_input" placeholder="Name">
+							</td>
+						</tr> -->
+						<!-- <tr>
+							<td class="pack_add">
+								<input type="text" id="pack_size_input" name="pack_size_input" placeholder="Pack Size">
+							</td>
+						</tr> -->
+						<tr>
+							<td class="desc_add">
+								<input type="text" id="desc_input" name="desc_input" placeholder="Description">
+							</td>
+						</tr>		
+						<tr>
+							<td class="cat_add">
+								<input type="text" id="cat_id_input" name="cat_id_input" placeholder="Product Category">
+							</td>
+						</tr>
+						<tr>
+							<td class="cat_add">
+								<input type="text" id="category_id_sp" name="category_id_sp" placeholder="Product Class">
+							</td>
+						</tr>		
+					</table>
+				</div>
+				<div class="col2">
+					<table class="item_add">
+						<tr>
+							<td class="cat_add">
+								<input type="text" id="unit_type_input" name="unit_type_input" placeholder="Product Type">
+							</td>
+						</tr>			
+						<tr>
+							<td class="manufacturer_add">
+								<input type="text" id="manufacturer_input" name="manufacturer_input" placeholder="Brand">
+							</td>
+						</tr>
+						<!-- <tr>
+							<td class="carton_add">
+								<input type="text" id="item_carton_input" name="item_carton_input" placeholder="Item Carton">
+							</td>
+						</tr> -->
+						<tr>
+							<td class="carton_add">
+								<input type="text" id="conv_factor_input" name="conv_factor_input" placeholder="Conv. Factor">
+							</td>
+						</tr>
+						<tr>
+							<td class="price_add">
+								<input type="text" id="price_input" name="price_input" placeholder="Price">
+							</td>
+						</tr>
+						<!-- <tr>
+							<td class="dis_price_add">
+								<input type="text" id="dis_price_input" name="dis_price_input" placeholder="Discount Price">
+							</td>
+						</tr> -->
+					</table>
+				</div>
+				<div class="col3">
+					<table class="item_add">
+						<!-- <tr>
+							<td class="vat_amt_add">
+								<input type="text" id="vat_amt_input" name="vat_amt_input" placeholder="VAT">
+							</td>
+						</tr> -->
+						<!-- <tr>
+							<td class=" ">
+								<input type="text" id="total_amt_input" name="total_amt_input" placeholder="Total Price">
+							</td>
+						</tr> -->
+						<tr>
+							<td class="status_add">
+								<select id="status_input" name="status_input" class="status">
+									<option value="" disabled selected>Status</option>
+									<option value="ACTIVE">ACTIVE</option>
+									<option value="INACTIVE">INACTIVE</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="field1_add">
+								<input type="text" id="field1_input" name="field1_input" placeholder="Tax">
+							</td>
+						</tr>
+						<tr>
+							<td class="note_add">
+								<input type="text" id="note_input" name="note_input" placeholder="Origin">
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="submit_row">
+				<input type="submit" name="submit_btn" id="submit_btn" value="Submit"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+{{block script}}
+<script>
+
+	$(document).ready(function(){
+
+		var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+		/* GET ALL ITEM_ID WITH NAME FOR FILTER ADVISE */
+		var discount_typeStr="";  
+   
+		// alert(base_url+'counter_item_stock/get_all_item_list')
+		$.ajax({
+			url: base_url+'item/get_all_item_list',
+			success: function(retStr) {
+				// alert (retStr)
+				discount_typeStr=retStr
+				console.log("Get all item list",discount_typeStr)
+			}
+		}); 
+
+		$("#item_id_name").keyup(function(event){
+			
+			// alert('ok')
+      //-------------------------
+			var ref_list = discount_typeStr.split(',');  
+			var ref_name=$("#item_id_name").val();
+			// alert(ref_name)
+			
+			//---------------- auto complete combo list
+			var ref_list_new1 =new Array();
+			lc=0;
+			i =0;
+			var refStr="";        
+			while (i < ref_list.length)
+			{
+				refStr=ref_list[i];
+				i=i+1;          
+				var res=refStr.toUpperCase().match(ref_name.toUpperCase());
+				if (res!=null){
+				ref_list_new1[lc]=refStr;
+				lc=lc+1;
+				if (lc==30){
+					break;
+				}
+				}else{
+				continue;
+				}         
+			};
+			
+			//-------------- auto complete source
+			$("input#item_id_name").autocomplete({
+				source: ref_list_new1
+			});
+		})
+	})
+
+
+    // url 
+    // function loadContent(url) {
+    //     const content = document.getElementById('content');
+    //     fetch(url)
+    //         .then(response => response.text())
+    //         .then(html => {
+    //             content.innerHTML = html;
+    //         })
+    //         .catch(error => console.error('Error fetching content:', error));
+    // }
+
+	// pop up 
+	function openPopup() {
+		document.getElementById('item_popup').classList.add('active');
+		console.log('Hello')
+	}
+
+	function closePopup() {
+		document.getElementById('item_popup').classList.remove('active');
+	}
+</script>
+{{end}}
