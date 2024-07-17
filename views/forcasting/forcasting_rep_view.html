@@ -711,17 +711,21 @@
                                             block_item_list.append((blocked_item_id, blocked_months.split(', ')))
                                         pass
                                 }}{{pass}}
-                                {{ for item_with_month in block_item_list:
+                                {{  item_list=[]
+                                    item_month=[]
+                                     for item_with_month in block_item_list:
                                     item,months = item_with_month
+                                    item_list.append(item)
+                                    item_month.append(months)
                                 
                                 }}
                                     
-                                {{if item == item_code:}}
-                                <!-- <td style="position: sticky; left: 0; z-index: 1; text-align: left; padding-left: 5px;">{{=item_code}}</td> -->
-                                <!-- working in this point -->
-                               
-                                
+                                {{if item_code in item_list:}}
+                                <td style="position: sticky; left: 0; z-index: 1; text-align: left; padding-left: 5px; color: red">{{=item_code}}</td>
+                                {{else:}}
                                 <td style="position: sticky; left: 0; z-index: 1; text-align: left; padding-left: 5px;">{{=item_code}}</td>
+
+                                {{pass}}
                                 <td style="position: sticky; left: 80px; z-index: 1; text-align: left; padding-left: 5px;">{{=item_name}}</td>
                                 <td style="text-align: left; padding-left: 5px;">{{=UoM}}</td>
                                 {{if status == 'POSTED' or status == 'APPROVED':}}
@@ -743,6 +747,7 @@
                                     <td>{{='{:20,.2f}'.format(float(month16))}}</td>
                                     <td>{{='{:20,.2f}'.format(float(month17))}}</td>
                                     <td>{{='{:20,.2f}'.format(float(month18))}}</td>
+                                
                                 
                                 {{else:}}
                                 {{ 
@@ -803,6 +808,7 @@
                                            <td><input type="text" id="qty_input" name="{{=input_name}}" pattern="^\d+(\.\d{1,2})?$" value="{{=globals().get(f'month{i}', '')}}"></td>
                                         {{pass}}
                                     {{pass}}
+                                {{pass}}
                                 {{pass}}
 
                                 <input type="hidden" name="item_code" value="{{=forcast['item_code']}}">
