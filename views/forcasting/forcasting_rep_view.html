@@ -698,13 +698,30 @@
                               
                             <tr class="single_row">
                                 <!-- <td>{{=block_item_list}}</td> -->
-                                {{for block_item in block_item_list:
+                                {{
+                                    block_item_list = []
                                     
-                                }}
-                                {{if block_item[0]}}
-                                <td style="position: sticky; left: 0; z-index: 1; text-align: left; padding-left: 5px;">{{=item_code}}</td>
+                                    get_item_date_sql = f"SELECT * FROM block_item WHERE cid = '{session.cid}' AND status = 'ACTIVE' ORDER BY item_id;"
+                                    get_item_date = db.executesql(get_item_date_sql, as_dict = True)
+                        
+                                    if len(get_item_date) != 0:
+                                        for data_rec in get_item_date:
+                                            blocked_item_id = str(data_rec['item_id'])
+                                            blocked_months = str(data_rec['blocked_months'])
+                                            block_item_list.append((blocked_item_id, blocked_months.split(', ')))
+                                        pass
+                                }}{{pass}}
+                                {{ for item_with_month in block_item_list:
+                                    item,months = item_with_month
                                 
-                                {{pass}}
+                                }}
+                                    
+                                {{if item == item_code:}}
+                                <!-- <td style="position: sticky; left: 0; z-index: 1; text-align: left; padding-left: 5px;">{{=item_code}}</td> -->
+                                <!-- working in this point -->
+                               
+                                
+                                <td style="position: sticky; left: 0; z-index: 1; text-align: left; padding-left: 5px;">{{=item_code}}</td>
                                 <td style="position: sticky; left: 80px; z-index: 1; text-align: left; padding-left: 5px;">{{=item_name}}</td>
                                 <td style="text-align: left; padding-left: 5px;">{{=UoM}}</td>
                                 {{if status == 'POSTED' or status == 'APPROVED':}}
