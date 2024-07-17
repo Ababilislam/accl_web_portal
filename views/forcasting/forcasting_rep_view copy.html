@@ -171,7 +171,7 @@
 			
 			setTimeout(function() {
 				flashMessage.style.display = "none";
-			}, 3000); // 3000 milliseconds = 3 seconds
+			}, 3000);
 		}
 	});
 
@@ -326,25 +326,8 @@
                             <th style="position: sticky; left: 0; z-index: 1; width: 80px; text-align: left;">Item Code</th>
                             <th style="position: sticky; left: 80px; z-index: 1; width: 220px; text-align: left;">Item Name</th>
                             <th style="width: 70px; text-align: left;">UoM</th>
-                            {{  cmonth1=''
-                                cmonth2=''
-                                cmonth3=''
-                                cmonth4=''
-                                cmonth5=''
-                                cmonth6=''
-                                cmonth7=''
-                                cmonth8=''
-                                cmonth9=''
-                                cmonth10=''
-                                cmonth11=''
-                                cmonth12=''
-                                cmonth13=''
-                                cmonth14=''
-                                cmonth15=''
-                                cmonth16=''
-                                cmonth17=''
-                                cmonth18=''}}
-                            {{for i in range(len(forecast_records)):
+                            {{ cmonth1='', cmonth2='', cmonth3='', cmonth4='', cmonth5='', cmonth6='', cmonth7='', cmonth8='', cmonth9='', cmonth10='', cmonth11='', cmonth12='', cmonth13='', cmonth14='', cmonth15='', cmonth16='', cmonth17='',cmonth18=''
+                                for i in range(len(forecast_records)):
                                 forecast = forecast_records[i]
                                 item_code = str(forecast["item_code"])
                                 item_name = str(forecast["item_name"])
@@ -387,7 +370,6 @@
                                 cmonth17 = month17
                                 cmonth18 = month18
                     
-                    
                                 if i == 0:
                             }}
                                     {{if planning_month != forcasting_first_date:}}
@@ -411,7 +393,7 @@
                                         <th style="width: 100px;"><input type="hidden" name="month18" value="{{=months[17]}}">{{=months[17]}}</th>
                                         
                                     {{else:}}
-                                        <th style="width: 100px;"><input type="hidden" name="month1" value="{{=month1}}">{{=month1}} </th>
+                                        <th style="width: 100px;"><input type="hidden" name="month1" value="{{=month1}}">{{=month1}}</th>
                                         <th style="width: 100px;"><input type="hidden" name="month2" value="{{=month2}}">{{=month2}}</th>
                                         <th style="width: 100px;"><input type="hidden" name="month3" value="{{=month3}}">{{=month3}}</th>
                                         <th style="width: 100px;"><input type="hidden" name="month4" value="{{=month4}}">{{=month4}}</th>
@@ -766,94 +748,92 @@
                                 <td style="position: sticky; left: 80px; z-index: 1; text-align: left; padding-left: 5px;">{{=item_name}}</td>
                                 <td style="text-align: left; padding-left: 5px;">{{=UoM}}</td>
                                 {{if status == 'POSTED' or status == 'APPROVED':}}
-                                <!-- {{#if month1 in month_list}} -->
-
-                                {{if cmonth1 in item_month:}}
+                                    {{if cmonth1 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month1))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month1))}}</td>
                                     {{pass}}
-                                    {{if cmonth2 in item_month:}}
+                                    {{if cmonth2 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month2))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month2))}}</td>
                                     {{pass}}
-                                    {{if cmonth3 in item_month:}}
+                                    {{if cmonth3 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month3))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month3))}}</td>
                                     {{pass}}
-                                    {{if cmonth4 in item_month:}}
+                                    {{if cmonth4 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month4))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month4))}}</td>
                                     {{pass}}
-                                    {{if cmonth5 in item_month:}}
+                                    {{if cmonth5 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month5))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month5))}}</td>
                                     {{pass}}
-                                    {{if cmonth6 in item_month:}}
+                                    {{if cmonth6 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month6))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month6))}}</td>
                                     {{pass}}
-                                    {{if cmonth7 in item_month:}}
+                                    {{if cmonth7 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month7))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month7))}}</td>
                                     {{pass}}
-                                    {{if cmonth8 in item_month:}}
+                                    {{if cmonth8 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month8))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month8))}}</td>
                                     {{pass}}
-                                    {{if cmonth9 in item_month:}}
+                                    {{if cmonth9 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month9))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month9))}}</td>
                                     {{pass}}
-                                    {{if cmonth10 in item_month:}}
+                                    {{if cmonth10 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month10))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month10))}}</td>
                                     {{pass}}
-                                    {{if cmonth11 in item_month:}}
+                                    {{if cmonth11 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month11))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month11))}}</td>
                                     {{pass}}
-                                    {{if cmonth12 in item_month:}}
+                                    {{if cmonth12 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month12))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month12))}}</td>
                                     {{pass}}
-                                    {{if cmonth13 in item_month:}}
+                                    {{if cmonth13 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month13))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month13))}}</td>
                                     {{pass}}
-                                    {{if cmonth14 in item_month:}}
+                                    {{if cmonth14 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month14))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month14))}}</td>
                                     {{pass}}
-                                    {{if cmonth15 in item_month:}}
+                                    {{if cmonth15 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month15))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month15))}}</td>
                                     {{pass}}
-                                    {{if cmonth16 in item_month:}}
+                                    {{if cmonth16 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month16))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month16))}}</td>
                                     {{pass}}
-                                    {{if cmonth17 in item_month:}}
+                                    {{if cmonth17 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month17))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month17))}}</td>
                                     {{pass}}
-                                    {{if cmonth18 in item_month:}}
+                                    {{if cmonth18 in month_list:}}
                                     <td style="background-color: red;">{{='{:20,.2f}'.format(float(month18))}}</td>
                                     {{else:}}
                                     <td>{{='{:20,.2f}'.format(float(month18))}}</td>
@@ -861,8 +841,6 @@
                                 
                                 {{pass}}
                                 {{pass}}
-                                
-                                 
 
                                 <input type="hidden" name="item_code" value="{{=forcast['item_code']}}">
 
